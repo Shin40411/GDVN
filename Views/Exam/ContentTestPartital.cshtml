@@ -1,0 +1,114 @@
+﻿@model List<GD.Web.Models.TestViewModel>
+
+@if (Model != null && Model.Count > 0)
+{
+<div class="col-lg-12">
+    <div class="card-style clients-table-card mb-30">
+        
+        <div class="table-wrapper table-responsive">
+            <table class="table lead-table">
+                <thead>
+                    <tr>
+                        <th class="name"><h6>Mã đề</h6></th>
+                        <th class="name"><h6>Tên đề</h6></th>
+                        <th class="name"><h6>Thời gian</h6></th>
+
+                        <!-- <th class="name"><h6>Phiếu trả lời</h6></th> -->
+
+                        <th class="name"><h6>Đề học sinh</h6></th>
+                        <th class="name"><h6>Đề giáo viên </h6></th>
+
+                    </tr>
+                    <!-- end table row-->
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @if (item.Name.Contains("-000"))
+                                {
+                                    <p>@Html.Raw(item.Name) (Đề gốc)</p>
+                                }
+                                else
+                                {
+                                    <p>@Html.Raw(item.Name)</p>
+                                }
+                            </td>
+
+                            <td>
+                                <p>@Html.Raw(item.Description)</p>
+                            </td>
+
+                            <td>
+                                <p>@Html.Raw(item.Time) phút</p>
+                            </td>
+
+                            <td >
+                                @if (!item.Name.Contains("-000"))
+                                {
+                                    <div class="action more-btn-wrapper">
+                                        <button class="more-btn dropdown-toggle"
+                                                id="moreAction"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <i class="lni lni-more-alt"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="moreAction">
+                                            <li class="dropdown-item">
+                                                <a href="@Url.Action("PreViewPrint", "Exam", new { id = item.ID, name = item.Name, description = item.Description, time = item.Time, view = item.View, course = ViewBag.IDCourse == null ? 0 : ViewBag.IDCourse, exam = ViewBag.IDExam, type = 1 })" target="_blank" class="text-gray">PDF</a>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <a href="@Url.Action("PreViewExport", "Exam", new { id = item.ID, name = item.Name, description = item.Description, time = item.Time, view = item.View, course = ViewBag.IDCourse == null ? 0 : ViewBag.IDCourse, exam = ViewBag.IDExam, type = 2 })" target="_blank" class="text-gray">Word</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Name.Contains("-000"))
+                                {
+                                    <div class="action more-btn-wrapper">
+                                        <button class="more-btn dropdown-toggle"
+                                                id="moreAction"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <i class="lni lni-more-alt"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end"
+                                            aria-labelledby="moreAction">
+                                            <li class="dropdown-item">
+                                                <a href="@Url.Action("PreViewPrint", "Exam", new { id = item.ID, name = item.Name, description = item.Description, time = item.Time, view = item.View, course = ViewBag.IDCourse == null ? 0 : ViewBag.IDCourse, exam = ViewBag.IDExam, type = 1 })" target="_blank" class="text-gray">PDF</a>
+                                            </li>
+                                            <li class="dropdown-item">
+                                                <a href="@Url.Action("PreViewExport", "Exam", new { id = item.ID, name = item.Name, description = item.Description, time = item.Time, view = item.View, course = ViewBag.IDCourse == null ? 0 : ViewBag.IDCourse, exam = ViewBag.IDExam, type = 2 })" target="_blank" class="text-gray">Word</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                     }
+                    
+                   
+                </tbody>
+            </table>
+            <!-- end table -->
+        </div>
+    </div>
+    <!-- end card -->
+</div>
+}
+else
+{
+    <div class="alert-box primary-alert">
+        <div class="alert">
+            <h4 class="alert-heading">THÔNG BÁO</h4>
+            <p class="text-medium">
+                Chưa có dữ liệu độ đề thi.
+            </p>
+        </div>
+    </div>
+}

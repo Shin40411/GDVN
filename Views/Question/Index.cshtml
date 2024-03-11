@@ -1,0 +1,1405 @@
+﻿@{
+    ViewBag.Title = "Ngân hàng câu hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/ckeditor/ckeditor.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Question.js?v=20220513")"></script>
+}
+
+<style>
+    #cke_Content {
+        border-radius: 0.35rem;
+    }
+
+    .modal-dialog {
+        min-width: 99%;
+    }
+
+    .answer-box {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .dxgvHeader_Office365 {
+        background-color: #1c53a3;
+        color: #fff;
+    }
+
+    .dxgv {
+        border-bottom: 1px solid #d1d1d1 !important;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Ngân hàng câu hỏi</h2>
+                        <a href="#" onclick="CreateQuestion()" class="main-btn primary-btn btn-hover btn-sm">
+                            <i class="lni lni-plus mr-5"></i> Thêm câu hỏi
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol style="display: flex; flex-wrap: wrap; padding: 0 0; margin-bottom: 1rem; list-style: none;">
+                            <li>
+                                @*@using (Html.BeginForm())
+                                    {
+                                        ViewContext.Writer.Write("<div id=\"contentTopicQuestionFilter\" style=\"display:block;\">");
+                                        Html.RenderPartial("ComboboxTopicPartital");
+                                        ViewContext.Writer.Write("</div>");
+                                    }*@
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="text-medium mb-2 fw-600">Danh sách câu hỏi</h6>
+                    <div class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  ">
+                        <div class="left">
+                            <div class="d-flex justify-content-between">
+                                <span class="mr-10 mt-1" style="width: 57px; color: black; font-weight: 600">Chủ đề</span>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentTopicQuestionFilter\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxTopicPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+
+                            </div>
+                        </div>
+                        <div class="right">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="mr-20">
+                                    @Html.DevExpress().TextBox(s =>
+                                   {
+
+                                       s.Name = "txtQuestionSearch";
+                                       s.Width = Unit.Percentage(100);
+                                       s.Properties.NullText = "Tìm kiếm...";
+                                       s.Properties.ClientSideEvents.TextChanged = "QuestionSearchTextChanged";
+                                   }).GetHtml()
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filter-type-question" onchange="onChangeFilterType()">
+                                    <label class="form-check-label text-medium mb-2" for="filter-type-question">Cá nhân</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper table-responsive">
+                        @using (Html.BeginForm())
+                        {
+                            Html.AntiForgeryToken();
+                            ViewContext.Writer.Write("<div id=\"contentLibraryQuestion\" style=\"display:block;\">");
+                            Html.RenderPartial("GridLibraryQuestionPartial");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+<!-- ========== Add Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="add-question" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">THÊM CÂU HỎI</h5>
+
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Môn học:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                                settings.Name = "comboBoxCourseAddQuestion";
+                                settings.Width = Unit.Percentage(100);
+                                settings.Properties.NullText = "Chọn môn học";
+                                settings.Properties.TextField = "Name";
+                                settings.Properties.ValueField = "ID";
+                                settings.Properties.ValueType = typeof(int);
+                                settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+                                settings.Properties.DropDownWidth = Unit.Pixel(500);
+                                settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                                settings.Properties.TextFormatString = "{0}";
+                                settings.Properties.Columns.Add("Name", "Môn học", Unit.Percentage(50));
+                                settings.Properties.Columns.Add("GradeGroup.Name", "Khối lớp", Unit.Percentage(50));
+                                settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseAddQuestionSelectedIndexChanged";
+                                }).BindList(ViewBag.CourseFilterLayoutData).Bind(ViewBag.CourseFilterLayoutDataID).GetHtml()
+                                @*@Html.DevExpress().ComboBox(settings =>
+                                    {
+                                        settings.Name = "comboBoxCourseAddQuestion";
+                                        settings.Width = Unit.Percentage(100);
+                                        settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+                                        settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+                                        settings.Properties.NullText = "Chọn môn học";
+                                        settings.Properties.TextField = "Name";
+                                        settings.Properties.ValueField = "ID";
+                                        settings.Properties.ValueType = typeof(int);
+                                        settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseAddQuestionSelectedIndexChanged";
+                                    }).BindList(ViewBag.CourseData).Bind(idCourse).GetHtml()*@
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Chủ đề:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentTopicAddQuestion\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxTopicAddQuestionPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Loại câu hỏi:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                               settings.Name = "comboBoxTypeAddQuestion";
+                               settings.Width = Unit.Percentage(100);
+                               settings.Properties.NullText = "Chọn loại";
+                               settings.Properties.TextField = "Name";
+                               settings.Properties.ValueField = "ID";
+                               settings.Properties.ValueType = typeof(int);
+                               settings.Properties.ClientSideEvents.SelectedIndexChanged = "TypeAddQuestionSelectedIndexChanged";
+                           }).BindList(ViewBag.TypeQuestionData).Bind(0).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Độ khó:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentLevelAddQuestion\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxLevelAddQuestionPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20" id="content-manyanswer-addquestion">
+                                <label class="form-label">Số đáp án:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                               settings.SelectedIndex = 0;
+                               settings.Name = "comboBoxManyAnswerAddQuestion";
+                               settings.Width = Unit.Percentage(100);
+                               settings.Properties.NullText = "Chọn số đáp án";
+                               settings.Properties.Items.Add("Một đáp án", 0);
+                               settings.Properties.Items.Add("Nhiều đáp án", 1);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20" id="content-pointnumber-addquestion">
+                                <label class="form-label">Điểm:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditPointAddQuestion";
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.DecimalPlaces = 2;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20" id="content-linenumber-addquestion">
+                                <label class="form-label">Số dòng trống để trả lời:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditLineNumberAddQuestion";
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20">
+                                <label class="form-label">Nội dung câu hỏi:</label>
+                                <textarea class="form-control" id="ContentAddQuestion" style="height: 100px"></textarea>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-answer-addquestion">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                        <h6 class="mb-20">Các câu trả lời:</h6>
+                                        <a href="#"
+                                           class="btn-sm primary-btn btn-hover mb-20" onclick="AddAnswerOneAddQuestion()">
+                                            <i class="lni lni-plus mr-10"></i>
+                                            Thêm đáp án(F9)
+                                        </a>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answerone-addquestion">
+                                            <div class="alert-box primary-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">A</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #4a6cf7;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerOneAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerOneAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerone-addquestion" id="choice-answerone-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answerone-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerone-addquestion" id="choice-answerone-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answerone-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answertwo-addquestion">
+                                            <div class="alert-box danger-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">B</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #d50100;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerTwoAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerTwoAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answertwo-addquestion" id="choice-answertwo-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answertwo-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answertwo-addquestion" id="choice-answertwo-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answertwo-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answerthree-addquestion">
+                                            <div class="alert-box orange-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">C</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #f2994a;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerThreeAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerThreeAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerthree-addquestion" id="choice-answerthree-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answerthree-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerthree-addquestion" id="choice-answerthree-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answerthree-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answerfour-addquestion">
+                                            <div class="alert-box warning-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">D</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #f7c800;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerFourAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerFourAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerfour-addquestion" id="choice-answerfour-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answerfour-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerfour-addquestion" id="choice-answerfour-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answerfour-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answerfive-addquestion">
+                                            <div class="alert-box info-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">E</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #97ca31;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerFiveAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerFiveAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerfive-addquestion" id="choice-answerfive-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answerfive-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerfive-addquestion" id="choice-answerfive-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answerfive-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answersix-addquestion">
+                                            <div class="alert-box success-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">F</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #219653;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerSixAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerSixAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answersix-addquestion" id="choice-answersix-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answersix-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answersix-addquestion" id="choice-answersix-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answersix-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answerseven-addquestion">
+                                            <div class="alert-box secondary-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">G</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #00c1f8;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerSevenAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerSevenAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerseven-addquestion" id="choice-answerseven-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answerseven-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answerseven-addquestion" id="choice-answerseven-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answerseven-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-12 col-xl-12" id="content-answereight-addquestion">
+                                            <div class="alert-box gray-alert pl-100">
+                                                <div class="left">
+                                                    <h5 class="text-bold" style="transform: none;">ĐÁP ÁN</h5>
+                                                    <h6 style="position: absolute; font-size: 20px; color: white;" class="text-bold mt-40">H</h6>
+                                                </div>
+                                                <div class="card-style-6" style="border: 1px solid #5d657b;">
+                                                    <div class="card-meta mb-25">
+                                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                            <h5 class="text-bold mr-10">
+                                                                Nội dung câu trả lời
+                                                            </h5>
+                                                            <button class="border-0 bg-transparent h1" onclick="CloseAnswerEightAddQuestion()">
+                                                                <i class="lni lni-cross-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-image">
+                                                        <textarea class="form-control" id="ContentAnswerEightAddQuestion"></textarea>
+                                                    </div>
+                                                    <div class="card-action">
+                                                        <div class="action mr-20">
+                                                            <h5 class="text-bold mr-10">
+                                                                Đáp án:
+                                                            </h5>
+                                                        </div>
+                                                        <div class="action">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answereight-addquestion" id="choice-answereight-addquestion-false" value="0" checked>
+                                                                <label class="form-check-label" for="choice-answereight-addquestion-false">Sai</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="choice-answereight-addquestion" id="choice-answereight-addquestion-true" value="1">
+                                                                <label class="form-check-label" for="choice-answereight-addquestion-true">Đúng</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+                        <button onclick="CreateQuestionSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== View Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="view-question" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Xem câu hỏi</h5>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row" id="content-detail-viewquestion">
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button onclick="seeAnswerQuestion()"
+                                class="main-btn success-btn-outline btn-hover m-1">
+                            Xem câu trả lời
+                        </button>
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Xong
+                        </button>
+                        <button onclick="AddAnswerView()"
+                                class="main-btn primary-btn btn-hover m-1" id="button-addanswerview">
+                            Thêm đáp án
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Edit Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="edit-question" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Chỉnh sửa câu hỏi</h5>
+
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Môn học:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                                   settings.Name = "comboBoxCourseEditQuestion";
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.NullText = "Chọn môn học";
+                                   settings.Properties.TextField = "Name";
+                                   settings.Properties.ValueField = "ID";
+                                   settings.Properties.ValueType = typeof(int);
+                                   settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseEditQuestionSelectedIndexChanged";
+                               }).BindList(ViewBag.CourseData).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Chủ đề:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentTopicEditQuestion\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxTopicEditQuestionPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Loại câu hỏi:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                               settings.Name = "comboBoxTypeEditQuestion";
+                               settings.Width = Unit.Percentage(100);
+                               settings.Properties.NullText = "Chọn loại";
+                               settings.Properties.TextField = "Name";
+                               settings.Properties.ValueField = "ID";
+                               settings.Properties.ValueType = typeof(int);
+                               settings.Properties.ClientSideEvents.SelectedIndexChanged = "TypeEditQuestionSelectedIndexChanged";
+                           }).BindList(ViewBag.TypeQuestionData).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Độ khó:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentLevelEditQuestion\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxLevelEditQuestionPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20" id="content-manyanswer-editquestion">
+                                <label class="form-label">Số đáp án:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                                   settings.Name = "comboBoxManyAnswerEditQuestion";
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.NullText = "Chọn số đáp án";
+                                   settings.Properties.Items.Add("Nhiều đáp án", 1);
+                                   settings.Properties.Items.Add("Một đáp án", 0);
+                               }).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20">
+                                <label class="form-label">Điểm:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditPointEditQuestion";
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.DecimalPlaces = 2;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-sm-6 mb-20" id="content-linenumber-editquestion">
+                                <label class="form-label">Số dòng trống để trả lời:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditLineNumberEditQuestion";
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-editquestion">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+                        <button onclick="EditQuestionSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Answer -->
+<div class="warning-modal">
+    <div class="modal fade" id="edit-answer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Chỉnh sửa đáp án</h5>
+                </div>
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 col-xl-12">
+                                <div class="alert-box primary-alert pl-100">
+                                    <div class="left">
+                                        <h5 class="text-bold">ĐÁP ÁN</h5>
+                                    </div>
+                                    <div class="card-style-6" style="border: 1px solid #4a6cf7;">
+                                        <div class="card-meta mb-25">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                <h5 class="text-bold mr-10">
+                                                    Nội dung
+                                                </h5>
+                                                <button class="border-0 bg-transparent h1" onclick="RemoveAnswerSubmit()">
+                                                    <i class="lni lni-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-image" id="content-editanswer">
+
+                                        </div>
+                                        <div class="card-action">
+                                            <div class="action mr-20">
+                                                <h5 class="text-bold mr-10">
+                                                    Đáp án:
+                                                </h5>
+                                            </div>
+                                            <div class="action">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="choice-answer-editanswer" id="choice-answer-editanswer-false" value="0" checked>
+                                                    <label class="form-check-label" for="choice-answer-editanswer-false">Sai</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="choice-answer-editanswer" id="choice-answer-editanswer-true" value="1">
+                                                    <label class="form-check-label" for="choice-answer-editanswer-true">Đúng</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Xong
+                        </button>
+                        <button onclick="UpdateAnswerSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="warning-modal">
+    <div class="modal fade" id="add-answer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Thêm đáp án</h5>
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12 col-xl-12">
+                                <div class="alert-box primary-alert pl-100">
+                                    <div class="left">
+                                        <h5 class="text-bold">ĐÁP ÁN</h5>
+                                    </div>
+                                    <div class="card-style-6" style="border: 1px solid #4a6cf7;">
+                                        <div class="card-meta mb-25">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                                <h5 class="text-bold mr-10">
+                                                    Nội dung
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="card-image">
+                                            <textarea class="form-control" id="ContentAnswerAddQuestion"></textarea>
+                                        </div>
+                                        <div class="card-action">
+                                            <div class="action mr-20">
+                                                <h5 class="text-bold mr-10">
+                                                    Đáp án:
+                                                </h5>
+                                            </div>
+                                            <div class="action">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="choice-answer-addanswer" id="choice-answer-addanswer-false" value="0" checked>
+                                                    <label class="form-check-label" for="choice-answer-addanswer-false">Sai</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="choice-answer-addanswer" id="choice-answer-addanswer-true" value="1">
+                                                    <label class="form-check-label" for="choice-answer-addanswer-true">Đúng</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Xong
+                        </button>
+                        <button onclick="AddAnswerSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("filter-course").style.display = 'block';
+    if (comboBoxTypeAddQuestion.GetValue() == null) {
+        document.getElementById("content-manyanswer-addquestion").style.display = "none";
+        document.getElementById("content-linenumber-addquestion").style.display = "none";
+        document.getElementById("content-answer-addquestion").style.display = "none";
+    }
+    var editorQuestionAddQuestion = CKEDITOR.replace('ContentAddQuestion',
+        {
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '150',
+        }
+    );
+    var editorAnswerOneAddQuestion = CKEDITOR.replace('ContentAnswerOneAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerTwoAddQuestion = CKEDITOR.replace('ContentAnswerTwoAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerThreeAddQuestion = CKEDITOR.replace('ContentAnswerThreeAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerFourAddQuestion = CKEDITOR.replace('ContentAnswerFourAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerFiveAddQuestion = CKEDITOR.replace('ContentAnswerFiveAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerSixAddQuestion = CKEDITOR.replace('ContentAnswerSixAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerSevenAddQuestion = CKEDITOR.replace('ContentAnswerSevenAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+    var editorAnswerEightAddQuestion = CKEDITOR.replace('ContentAnswerEightAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+
+    var editorAnswerAddQuestion = CKEDITOR.replace('ContentAnswerAddQuestion',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '90',
+        }
+    );
+
+    //$("input[type=radio][name=choice-answerone-addquestion][value=" + 1 + "]").prop('checked', true);
+    //var value = $("input[type=radio][name=choice-answerone-addquestion]:checked").val();
+
+    //an khung nhap noi dung cau tra loi
+    document.getElementById("content-answerone-addquestion").style.display = "block";
+    document.getElementById("content-answertwo-addquestion").style.display = "block";
+    document.getElementById("content-answerthree-addquestion").style.display = "none";
+    document.getElementById("content-answerfour-addquestion").style.display = "none";
+    document.getElementById("content-answerfive-addquestion").style.display = "none";
+    document.getElementById("content-answersix-addquestion").style.display = "none";
+    document.getElementById("content-answerseven-addquestion").style.display = "none";
+    document.getElementById("content-answereight-addquestion").style.display = "none";
+
+    function ResetValueControl() {
+
+        numberAnswerAddShow = 2;
+        showAnswerOneAdd = true;
+        showAnswerTwoAdd = true;
+        showAnswerThreeAdd = false;
+        showAnswerFourAdd = false;
+        showAnswerFiveAdd = false;
+        showAnswerSixAdd = false;
+        showAnswerSevenAdd = false;
+        showAnswerEightAdd = false;
+        comboBoxCourseAddQuestion.SetValue(null);
+        comboBoxTopicAddQuestion.SetValue(null);
+        comboBoxTypeAddQuestion.SetValue(null);
+        comboBoxLevelAddQuestion.SetValue(null);
+        comboBoxManyAnswerAddQuestion.SetValue(null);
+        spinEditPointAddQuestion.SetValue(null);
+        spinEditLineNumberAddQuestion.SetValue(null);
+
+        document.getElementById("content-manyanswer-addquestion").style.display = "none";
+        document.getElementById("content-linenumber-addquestion").style.display = "none";
+        document.getElementById("content-answer-addquestion").style.display = "none";
+
+        document.getElementById("content-answerone-addquestion").style.display = "block";
+        document.getElementById("content-answertwo-addquestion").style.display = "block";
+        document.getElementById("content-answerthree-addquestion").style.display = "none";
+        document.getElementById("content-answerfour-addquestion").style.display = "none";
+        document.getElementById("content-answerfive-addquestion").style.display = "none";
+        document.getElementById("content-answersix-addquestion").style.display = "none";
+        document.getElementById("content-answerseven-addquestion").style.display = "none";
+        document.getElementById("content-answereight-addquestion").style.display = "none";
+
+        CKEDITOR.instances['ContentAddQuestion'].setData('');
+
+        //set cau tra loi
+        //dap an
+        $("input[type=radio][name=choice-answerone-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answertwo-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answerthree-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answerfour-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answerfive-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answersix-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answerseven-addquestion][value=" + 0 + "]").prop('checked', true);
+        $("input[type=radio][name=choice-answereight-addquestion][value=" + 0 + "]").prop('checked', true);
+
+        CKEDITOR.instances['ContentAnswerOneAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerTwoAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerThreeAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerFourAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerFiveAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerSixAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerSevenAddQuestion'].setData('');
+        CKEDITOR.instances['ContentAnswerEightAddQuestion'].setData('');
+    }
+
+    $(document).keydown(function (e) {
+        if (e.which == 120) {
+            if ($('#add-question').hasClass('show') == true) {
+                AddAnswerOneAddQuestion();
+            }
+        }
+        //enter
+        //if (e.which == 13) {
+        //    onKeyEnterViewQuestion();
+        //}
+    })
+
+
+
+</script>
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlFilterLibraryQuestion";
+    settings.HeaderText = "Lọc Danh Sách";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.HorizontalAlign = PopupAdaptiveHorizontalAlign.WindowRight;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(300);
+    settings.SettingsAdaptivity.MinHeight = Unit.Pixel(600);
+    settings.SettingsAdaptivity.MaxHeight = Unit.Pixel(650);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutFilterLibraryQuestion";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitFilterLibraryQuestion";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickFilterLibraryQuestion";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutFilterLibraryQuestion";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "cbTypeLibraryQuestion";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Kích hoạt", 0);
+                            c.Properties.Items.Add("Chưa kích hoạt", 1);
+                            c.Properties.ClientSideEvents.ValueChanged = "TypeLibraryQuestionValueChanged";
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlImportQuestion";
+    settings.HeaderText = "IMPORT";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Percentage(90);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutImportQuestion";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='d-flex flex-wrap align-items-center justify-content-between'>");
+                    ViewContext.Writer.Write("<div style='padding-top: 15px;'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnDownloadImportQuestionTemplate";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Tập tin mẫu";
+                        s.ClientSideEvents.Click = "onDownloadTemplateClickImportQuestion";
+                    }).Render();
+                    ViewContext.Writer.Write("</div>");
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitImportQuestion";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Tải lên";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickImportQuestion";
+                    }).Render();
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelImportQuestion";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Xong";
+                        s.RenderMode = ButtonRenderMode.Outline;
+                        s.ClientSideEvents.Click = "onCancelClickImportQuestion";
+                    }).Render();
+
+
+                    ViewContext.Writer.Write("</div>");
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutImportQuestion";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "comboBoxTypeQuestionImport";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Trắc nghiệm", 1);
+                            c.Properties.Items.Add("Tự luận", 2);
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Môn học";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(s =>
+                        {
+                            s.Name = "comboBoxCourseQuestionImport";
+                            s.Width = Unit.Percentage(100);
+                            s.Properties.NullText = "Chọn môn học";
+                            s.Properties.TextField = "Name";
+                            s.Properties.ValueField = "ID";
+                            s.Properties.ValueType = typeof(int);
+                            s.Properties.ClientSideEvents.SelectedIndexChanged = "CourseQuestionImportSelectedIndexChanged";
+                        }).BindList(ViewBag.CourseData).GetHtml();
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Chủ đề";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentTopicQuestionImport\" style=\"display:block;\">");
+                            Html.RenderPartial("ComboboxTopicQuestionImportPartital");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Chọn tập tin:";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentImportFileQuestion\" style=\"display:block;\">");
+                            Html.RenderPartial("UploadFileQuestionPartial");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlNotication";
+    settings.HeaderText = "THÔNG BÁO";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(700);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutNotication";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelNotication";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onCancelNoticationClick";
+                    }).Render();
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutNotication";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.SetNestedContent(() =>
+                    {
+                        ViewContext.Writer.Write("<div id=\"viewNotication\" style=\"display:block;\">");
+
+                        ViewContext.Writer.Write("</div>");
+
+                    });
+                });
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()

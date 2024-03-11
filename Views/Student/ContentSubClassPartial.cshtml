@@ -1,0 +1,49 @@
+﻿@if (ViewBag.SubClassData != null && ViewBag.SubClassData.Count > 0)
+{
+    <div class="col-lg-12">
+        <div class="card-style clients-table-card mb-30">
+
+            <div class="table-wrapper table-responsive">
+                <table class="table lead-table">
+                    <thead>
+                        <tr>
+                            <th class="name"><h6>Năm học</h6></th>
+                            <th class="name"><h6>Lớp học</h6></th>
+                        </tr>
+                        <!-- end table row-->
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.SubClassData)
+                        {
+                            <tr>
+                                <td>
+                                    <p>@Html.Raw(item.Scholastic.Name)</p>
+                                </td>
+
+                                <td>
+                                    <p>@Html.Raw(item.Grade.Name)</p>
+                                </td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+                <!-- end table -->
+            </div>
+        </div>
+        <!-- end card -->
+    </div>
+}
+else
+{
+    <div class="alert-box primary-alert">
+        <div class="alert">
+            <h4 class="alert-heading">THÔNG BÁO</h4>
+            <p class="text-medium">
+                Chưa có dữ liệu chia lớp.
+            </p>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,28 @@
+﻿@Html.DevExpress().DropDownEdit(settings => {
+    settings.Name = "comboBoxMenu";
+    settings.Width = Unit.Percentage(100);
+    settings.SetDropDownWindowTemplateContent(c => {
+        @Html.DevExpress().ListBox(gsettings => {
+            gsettings.Name = "listBoxMenu";
+            gsettings.Style.Add("float", "left");
+            gsettings.Width = Unit.Percentage(100);
+            gsettings.Height = 350;
+            gsettings.Properties.EnableSelectAll = true;
+            gsettings.Properties.FilteringSettings.ShowSearchUI = true;
+            gsettings.Properties.EnableClientSideAPI = true;
+            gsettings.Properties.SelectionMode = ListEditSelectionMode.CheckColumn;
+            gsettings.Properties.ValueField = "ID";
+            gsettings.Properties.ValueType = typeof(int);
+            gsettings.Properties.Columns.Add("Name", "Định danh").Width = Unit.Percentage(25);
+            gsettings.Properties.Columns.Add("Caption", "Tên").Width = Unit.Percentage(25);
+            gsettings.Properties.Columns.Add("URL", "URL").Width = Unit.Percentage(50);
+
+            gsettings.Properties.ClientSideEvents.SelectedIndexChanged = "MenuSelectedIndexChanged";
+
+
+        }).BindList(Model).Render();
+    });
+    settings.Properties.AnimationType = AnimationType.None;
+    //settings.Properties.ClientSideEvents.TextChanged = "MenuTextChanged";
+
+}).GetHtml()

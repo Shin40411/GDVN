@@ -1,0 +1,32 @@
+﻿@if (ViewBag.Session != null && ViewBag.Session.Count > 0)
+{
+    for (var i = 0; i < ViewBag.Session.Count; i++)
+    {
+        <div class="col">
+            <div class="card-style h-100">
+                <input type="checkbox" name="arrayNew" class="chooseToDel form-check-input" value="@ViewBag.Session[i].ID" onchange="ChooseDelete(this)" />
+                <div onclick="onOpenNavigateControl('@ViewBag.Session[i].ID')">
+                    <img src="~/Content/Custom/Images/students.png" class="card-img-top img-fluid" height="350" />
+
+                    <div class="card-body">
+                        <h5 class="card-title text-center">@Html.Raw(ViewBag.Session[i].SessionName)</h5>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-lg-12">
+        <div class="alert-box danger-alert">
+            <div class="alert" style="background-color: #ffffff;">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p class="text-medium">
+                    Chưa có dữ liệu.
+                </p>
+            </div>
+        </div>
+    </div>
+}

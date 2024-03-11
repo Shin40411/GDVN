@@ -1,0 +1,162 @@
+﻿@{
+    ViewBag.Title = "Danh sách lớp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Student.js?v=20220513")"></script>
+}
+
+<style>
+    .uppercase input {
+        text-transform: uppercase;
+    }
+
+    .dxflRequired_Office365 {
+        color: #ff0000;
+    }
+
+    .dxgvHeader_Office365 {
+        background-color: #1c53a3;
+        color: #fff;
+    }
+
+    .dxgv {
+        border-bottom: 1px solid #d1d1d1 !important;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Danh sách lớp</h2>
+                        <a href="#" onclick="CreateGrade()" class="main-btn primary-btn btn-hover btn-sm">
+                            <i class="lni lni-plus mr-5"></i> Thêm lớp
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol style="display: flex; flex-wrap: wrap; padding: 0 0; margin-bottom: 1rem; list-style: none;">
+                            <li>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentSubClass\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxScholasticPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <div class="projects-wrapper">
+        <div class="row d-flex justify-content-start" id="content-lesson">
+            @Html.Partial("ContentClassPartial")
+        </div>
+        <!-- End Row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <!--<div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">Danh sách học sinh</h6>
+
+                    <div class="table-wrapper table-responsive" >
+
+                    </div>
+
+                </div>-->
+    <!-- end card -->
+    <!--</div>-->
+    <!-- end col -->
+    <!--</div>-->
+    <!-- end row -->
+    <!--</div>-->
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+<script>
+    $(document).keydown(function (e) {
+        //enter
+        if (e.which == 13) {
+            onKeyEnterViewStudent();
+        }
+    })
+    document.getElementById("filter-scholastic").style.display = 'block';
+</script>
+<div class="warning-modal">
+    <div class="modal fade" id="add-class" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-1">
+                    <h5 class="text-bold">THÊM LỚP</h5>
+
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <label class="form-label">Khối lớp:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                                   settings.Name = "comboBoxAddClass";
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.NullText = "Chọn khối lớp";
+                                   settings.Properties.TextField = "Name";
+                                   settings.Properties.ValueField = "ID";
+                                   settings.Properties.ValueType = typeof(int);
+                               }).BindList(ViewBag.GradeGroupData).Bind(ViewBag.FristGradeGroupData).GetHtml()
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <label class="form-label">Hậu tố:</label>
+                                @Html.DevExpress().TextBox(settings =>
+                                {
+                                    settings.Name = "textBoxNameClass";
+                                    settings.Width = Unit.Percentage(100);
+
+                                }).GetHtml()
+                            </div>
+
+
+                            <div class="col">
+                                <label class="form-label">Ghi chú:</label>
+                                @Html.DevExpress().TextBox(settings =>
+                                {
+                               settings.Name = "textBoxNoteClass";
+                               settings.Width = Unit.Percentage(100);
+                               settings.Height = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end mt-5">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+                        <button onclick="AddClassSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

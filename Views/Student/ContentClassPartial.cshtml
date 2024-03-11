@@ -1,0 +1,31 @@
+﻿ @if (ViewBag.DataGrade != null && ViewBag.DataGrade.Count > 0)
+{
+    for (var i = 0; i < ViewBag.DataGrade.Count; i++)
+    {
+        <div class="col-lg-3 col-md-3">
+            <a class="card-style project-card mb-30" href="/Student/GridStudent?id=@ViewBag.DataGrade[i].ID">
+                <img src="@Url.Content("~/Content/Custom/Images/grade.jpg")" style="border-radius: 20px;" class="card-img-top img-fluid" height="350" alt="dsaas-@i">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        <h5>@Html.Raw(@ViewBag.DataGrade[i].Name)</h5>
+                    </div>
+
+                </div>
+            </a>
+            <!-- End Card -->
+        </div>
+    }
+}
+else
+{
+    <div class="col-lg-12">
+        <div class="alert-box danger-alert">
+            <div class="alert" style="background-color: #ffffff;">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p style="font-size: 15px;" class="text-medium">
+                    Chưa có dữ liệu.
+                </p>
+            </div>
+        </div>
+    </div>
+}

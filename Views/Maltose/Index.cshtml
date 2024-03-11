@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "Maltose";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    
+}
+
+<div class="container-fluid" style="background-image: url('../../Content/Custom/Images/bgcontent.png'); background-repeat: no-repeat; background-position: center; background-size: 100%;">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-wrapper table-responsive" style="position: relative;">
+                    <div style="position: absolute; top: 20px; right:30px;color: #fff;">
+                        <p>
+                            <strong>Mô hình:</strong>  Maltose<br />
+                            <strong>Tác giả:</strong> ThS Võ Thị Bích Huyền<br />
+                            <strong>Thực hiện:</strong> GD Việt Nam<br />
+                        </p>
+                    </div>
+                    <div id="container"></div>
+                </div>
+                <!-- end card -->
+            </div>
+            
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+<script async src="@Url.Content("~/Content/Custom/Threejs/es-module-shims.js")"></script>
+<script type="importmap">
+    {
+        "imports": {
+        "three": "../Content/Custom/Threejs/build/three.module.js"
+        }
+    }
+</script>
+<script type="module">
+
+    import * as THREE from 'three';
+
+    import Stats from '../Content/Custom/Threejs/jsm/libs/stats.module.js';
+
+    import { OrbitControls } from '../Content/Custom/Threejs/jsm/controls/OrbitControls.js';
+    import { RoomEnvironment } from '../Content/Custom/Threejs/jsm/environments/RoomEnvironment.js';
+
+    import { GLTFLoader } from '../Content/Custom/Threejs/jsm/loaders/GLTFLoader.js';
+    import { DRACOLoader } from '../Content/Custom/Threejs/jsm/loaders/DRACOLoader.js';
+
+    let mixer;
+
+    const clock = new THREE.Clock();
+    const container = document.getElementById('container');
+
+    //const stats = new Stats();
+    //container.appendChild(stats.dom);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.offsetWidth, window.innerHeight - (window.innerHeight *0.2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+    const scene = new THREE.Scene();
+    //background color
+    //scene.background = new THREE.Color("rgb(255, 255, 255)");
+    //const bgImage = new THREE.TextureLoader();
+    //scene.background = bgImage.load('../Content/Custom/Images/bgcontent.png');
+
+    const path = '../Content/Custom/Images/Background/BG/';
+    const format = '.jpg';
+    const urls = [
+        path + '1' + format, path + '1' + format,
+        path + '1' + format, path + '1' + format,
+        path + '1' + format, path + '1' + format
+    ];
+
+    const textureCube = new THREE.CubeTextureLoader().load(urls);
+
+    textureCube.encoding = THREE.sRGBEncoding;
+
+    scene.background = textureCube;
+
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.5, 3000);
+    //kich thuoc z
+    //goc nhin x, y
+    camera.position.set(0, 0 , 12);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0.5, 0);
+    controls.update();
+    controls.enablePan = false;
+    controls.enableDamping = true;
+
+    //const dracoLoader = new DRACOLoader();
+    //dracoLoader.setDecoderPath('../Content/Custom/Threejs/js/libs/draco/gltf/');
+
+    const loader = new GLTFLoader();
+    //loader.setDRACOLoader(dracoLoader);
+    loader.load('../Content/Custom/Threejs/models/gltf/maltose.gltf', function (gltf) {
+
+        const model = gltf.scene;
+        model.position.set(-0.5, 0, 0);
+        model.scale.set(0.5, 0.5, 0.5);
+        scene.add(model);
+
+        //chuyen dong
+       //mixer = new THREE.AnimationMixer( model );
+        //mixer.clipAction(gltf.animations[0]).play();
+
+       animate();
+
+    }, undefined, function (e) {
+
+        console.error(e);
+
+    });
+
+
+    window.onresize = function () {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+    };
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+
+        //const delta = clock.getDelta();
+
+        //chuyen dong
+        //mixer.update(delta);
+
+        controls.update();
+
+        //stats.update();
+
+        renderer.render(scene, camera);
+
+    }
+
+
+</script>

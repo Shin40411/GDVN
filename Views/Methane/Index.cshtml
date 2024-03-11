@@ -1,0 +1,141 @@
+﻿@{
+    ViewBag.Title ="Methane";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    
+}
+
+<div class="container-fluid" style="background-image: url('../../Content/Custom/Images/bgcontent.png'); background-repeat: no-repeat; background-position: center; background-size: 100%;">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-wrapper table-responsive" style="position: relative;">
+                    <div style="position: absolute; top: 20px; right:30px;color: #fff;">
+                        <p>
+                            <strong>Mô hình:</strong>  Methane<br />
+                            <strong>Tác giả:</strong> <br />
+                            <strong>Thực hiện:</strong> GD Việt Nam<br />
+                        </p>
+                    </div>
+                    <div id="container"></div>
+                </div>
+                <!-- end card -->
+            </div>
+            
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+<script async src="@Url.Content("~/Content/Custom/Threejs/es-module-shims.js")"></script>
+<script type="importmap">
+    {
+        "imports": {
+        "three": "../Content/Custom/Threejs/build/three.module.js"
+        }
+    }
+</script>
+<script type="module">
+
+    import * as THREE from 'three';
+
+
+    import { OrbitControls } from '../Content/Custom/Threejs/jsm/controls/OrbitControls.js';
+
+    import { GLTFLoader } from '../Content/Custom/Threejs/jsm/loaders/GLTFLoader.js';
+
+    const container = document.getElementById('container');
+
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(container.offsetWidth, window.innerHeight - (window.innerHeight *0.2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+
+    const scene = new THREE.Scene();
+    //background color
+    //scene.background = new THREE.Color("rgb(211,211,211)");
+    // ambient light setup
+    const amibientLight = new THREE.AmbientLight(0x808080, 2);
+    scene.add(amibientLight);
+
+    const spotLight1 = new THREE.SpotLight(0x1d27f0, 2);
+    spotLight1.position.set(6, 0, 6);
+    spotLight1.castShadow = true;
+    scene.add(spotLight1);
+
+    const bgImage = new THREE.TextureLoader();
+    scene.background = bgImage.load('../Content/Custom/Images/bg-fructose.jpg');
+
+
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
+    //kich thuoc z
+    //goc nhin x, y
+    camera.position.set(0, 0, 8);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0.5, 0);
+    controls.update();
+    controls.enablePan = false;
+    controls.enableDamping = true;
+
+
+    const loader = new GLTFLoader();
+    loader.load('../Content/Custom/Threejs/models/gltf/methane.gltf', function (gltf) {
+
+        const model = gltf.scene;
+        model.position.set(1, -2, 0);
+        //model.scale.set(0.01, 0.01, 0.01);
+        scene.add(model);
+
+       animate();
+
+    }, undefined, function (e) {
+
+        console.error(e);
+
+    });
+
+
+    window.onresize = function () {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+    };
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+
+        //const delta = clock.getDelta();
+
+        //chuyen dong
+        //mixer.update(delta);
+
+        controls.update();
+
+        //stats.update();
+
+        renderer.render(scene, camera);
+
+    }
+
+
+</script>

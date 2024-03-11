@@ -1,0 +1,277 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+        @{ var pageTitleParts = new string[] { ViewBag.Title, "GD System" }; }
+        @string.Join(" - ", @pageTitleParts.Where(s => !string.IsNullOrEmpty(s)))
+    </title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    @Html.DevExpress().GetStyleSheets(
+    new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+    new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+    new StyleSheet { ExtensionSuite = ExtensionSuite.GridView },
+    new StyleSheet { ExtensionSuite = ExtensionSuite.Scheduler }
+)
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.Editors },
+        new Script { ExtensionSuite = ExtensionSuite.GridView },
+        new Script { ExtensionSuite = ExtensionSuite.Scheduler }
+    )
+    <link rel="icon" href="@Url.Content("~/Content/Custom/Images/gdlogo.ico")" type="image/x-icon" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/lineicons.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/main.css?v=20220304")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Custom/Css/Library/toastr.min.css")" />
+    @RenderSection("Head", false)
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/functions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/toastr.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/System/Layout.js?v=20220311")"></script>
+</head>
+<body>
+    @using (Html.BeginForm("SignOut", "Account", FormMethod.Post, new { id = "signOutForm" }))
+    {
+        @Html.AntiForgeryToken();
+    }
+    @Html.DevExpress().LoadingPanel(settings =>
+{
+    settings.Name = "Loading";
+    settings.Modal = true;
+    settings.Text = "Đang tải...";
+    settings.ImagePosition = ImagePosition.Top;
+    settings.Images.LoadingPanel.Url = "~/Content/Custom/Images/loading.gif";
+    settings.Images.LoadingPanel.Width = 60;
+    settings.Images.LoadingPanel.Height = 60;
+}).GetHtml()
+    @Html.DevExpress().LoadingPanel(settings =>
+{
+    settings.Name = "LoadingSave";
+    settings.Modal = true;
+    settings.Text = "Đang lưu...";
+    settings.ImagePosition = ImagePosition.Top;
+    settings.Images.LoadingPanel.Url = "~/Content/Custom/Images/loading.gif";
+    settings.Images.LoadingPanel.Width = 60;
+    settings.Images.LoadingPanel.Height = 60;
+}).GetHtml()
+    <!-- ======== sidebar-nav start =========== -->
+    @if (true)
+    {
+        Html.RenderPartial("LeftPanelPartialData");
+    }
+    <div class="overlay"></div>
+    <!-- ======== sidebar-nav end =========== -->
+    <!-- ======== main-wrapper start =========== -->
+    <main class="main-wrapper">
+        <!-- ========== header start ========== -->
+        <header class="header" style="background-image: url('../../Content/Custom/Images/header.png');">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-6">
+                        <div class="header-left d-flex align-items-center">
+                            <div class="menu-toggle-btn mr-20">
+                                <button id="menu-toggle" class="main-btn primary-btn btn-hover">
+                                    <i class="lni lni-chevron-left me-2"></i> Menu
+                                </button>
+                            </div>
+                            <div class="header-search d-none d-md-flex">
+                                @if (User.Identity.IsAuthenticated && GD.Web.SessionHelper.Information != null)
+                                {
+                                    <input type="text" id="menu-active" value="@Html.Raw(ViewBag.Menu)" hidden />
+                                    <div id="filter-course" style="display: none">
+                                        @if (ViewBag.CourseFilterLayoutData != null)
+                                        {
+                                            if (System.Web.HttpContext.Current.Request.Cookies["Course"] != null)
+                                            {
+                                                var idCourse = Int32.Parse(System.Web.HttpContext.Current.Request.Cookies["Course"].Value);
+                                                Html.DevExpress().ComboBox(settings =>
+                                                {
+                                                    settings.Name = "comboBoxCourseFilter";
+                                                    settings.ControlStyle.CssClass = "form-control";
+                                                    settings.Width = Unit.Percentage(100);
+                                                    settings.Properties.NullText = "Chọn môn học";
+                                                    settings.Properties.TextField = "Name";
+                                                    settings.Properties.ValueField = "ID";
+                                                    settings.Properties.ValueType = typeof(int);
+                                                    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+                                                    settings.Properties.DropDownWidth = Unit.Pixel(500);
+                                                    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                                                    settings.Properties.TextFormatString = "{0}";
+                                                    settings.Properties.Columns.Add("Name", "Môn học", Unit.Percentage(50));
+                                                    settings.Properties.Columns.Add("GradeGroup.Name", "Khối lớp", Unit.Percentage(50));
+                                                    settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseFilterSelectedIndexChanged";
+                                                }).BindList(ViewBag.CourseFilterLayoutData).Bind(idCourse).GetHtml();
+                                            }
+                                            else
+                                            {
+                                                Html.DevExpress().ComboBox(settings =>
+                                                {
+                                                    settings.Name = "comboBoxCourseFilter";
+                                                    settings.ControlStyle.CssClass = "form-control";
+                                                    settings.Width = Unit.Percentage(100);
+                                                    settings.Properties.NullText = "Chọn môn học";
+                                                    settings.Properties.TextField = "Name";
+                                                    settings.Properties.ValueField = "ID";
+                                                    settings.Properties.ValueType = typeof(int);
+                                                    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+                                                    settings.Properties.DropDownWidth = Unit.Pixel(500);
+                                                    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                                                    settings.Properties.TextFormatString = "{0}";
+                                                    settings.Properties.Columns.Add("Name", "Môn học", Unit.Percentage(50));
+                                                    settings.Properties.Columns.Add("GradeGroup.Name", "Khối lớp", Unit.Percentage(50));
+                                                    settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseFilterSelectedIndexChanged";
+                                                }).BindList(ViewBag.CourseFilterLayoutData).GetHtml();
+                                            }
+                                        }
+                                    </div>
+                                    <div id="filter-scholastic" style="display: none">
+                                        @if (ViewBag.ScholasticFilterData != null)
+                                        {
+
+                                            if (ViewBag.ScholasticFilterDataID != null)
+                                            {
+                                                Html.DevExpress().ComboBox(settings =>
+                                               {
+                                                   settings.Name = "comboBoxScholasticFilter";
+                                                   settings.ControlStyle.CssClass = "form-control";
+                                                   settings.Width = Unit.Percentage(100);
+                                                   settings.Properties.NullText = "Chọn năm học";
+                                                   settings.Properties.TextField = "Name";
+                                                   settings.Properties.ValueField = "ID";
+                                                   settings.Properties.ValueType = typeof(int);
+                                                   settings.Properties.ClientSideEvents.SelectedIndexChanged = "ScholasticFilterSelectedIndexChanged";
+                                               }).BindList(ViewBag.ScholasticFilterData).Bind(ViewBag.ScholasticFilterDataID).GetHtml();
+                                            }
+                                            else
+                                            {
+                                                Html.DevExpress().ComboBox(settings =>
+                                               {
+                                                   settings.Name = "comboBoxScholasticFilter";
+                                                   settings.ControlStyle.CssClass = "form-control";
+                                                   settings.Width = Unit.Percentage(100);
+                                                   settings.Properties.NullText = "Chọn năm học";
+                                                   settings.Properties.TextField = "Name";
+                                                   settings.Properties.ValueField = "ID";
+                                                   settings.Properties.ValueType = typeof(int);
+                                                   settings.Properties.ClientSideEvents.SelectedIndexChanged = "ScholasticFilterSelectedIndexChanged";
+                                               }).BindList(ViewBag.ScholasticFilterData).GetHtml();
+                                            }
+
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-7 col-6">
+                        <div class="header-right">
+
+                            @if (User.Identity.IsAuthenticated && GD.Web.SessionHelper.Information != null)
+                            {
+                                <div class="profile-box ml-15">
+                                    <button class="dropdown-toggle bg-transparent border-0"
+                                            type="button"
+                                            id="profile"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <div class="profile-info">
+                                            <div class="info">
+                                                <h6 style="color: #fff;">@Html.Raw(GD.Web.SessionHelper.Information.FullName)</h6>
+                                                <div class="image">
+                                                    <img src="@Url.Content("~/Content/themes/images/profile/avatarGD.png")"
+                                                         alt="" />
+                                                    <span class="status"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <i style="color: #fff;" class="lni lni-chevron-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end"
+                                        aria-labelledby="profile">
+                                        <li>
+                                            <a href="#">
+                                                <i class="lni lni-user"></i> Thông tin
+                                            </a>
+                                        </li>
+
+                                        <!--
+                                        <li>
+                                            <a href="#0">
+                                                <i class="lni lni-alarm"></i> Notifications
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#0"> <i class="lni lni-inbox"></i> Messages </a>
+                                        </li>
+                                        <li>
+                                            <a href="#0"> <i class="lni lni-cog"></i> Settings </a>
+                                        </li>
+                                        -->
+                                        <li>
+                                            <a href="#" onclick="javascript: document.getElementById('signOutForm').submit();Loading.Show()"> <i class="lni lni-exit"></i> Đăng xuất </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                            <!-- profile end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ========== header end ========== -->
+        <!-- ========== section start ========== -->
+        <section class="section" >
+            @RenderBody()
+        </section>
+        <!-- ========== section end ========== -->
+        <!-- ========== footer start =========== -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 order-last order-md-first">
+                        <div class="copyright text-center text-md-start">
+                            <p class="text-sm" style="color: #1c53a3; font-weight: 500;">
+                                THIẾT KẾ VÀ PHÁT TRIỂN BỞI
+                                CTY CP GIẢI PHÁP CÔNG NGHỆ GD VIỆT NAM
+                            </p>
+                        </div>
+                    </div>
+                    <!-- end col-->
+                    <div class="col-md-6">
+                        <div class="terms d-flex justify-content-center justify-content-md-end">
+                            <a href="#" class="text-sm" style="color: #1c53a3;">Điều khoản</a>
+                            <a href="#" class="text-sm ml-15" style="color: #1c53a3;" onclick="OnTutorial()">Hướng dẫn</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </footer>
+        <!-- ========== footer end =========== -->
+    </main>
+    <!-- ======== main-wrapper end =========== -->
+    <!-- ========= All Javascript files linkup ======== -->
+    <script src="@Url.Content("~/Content/themes/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/Chart.min.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/dynamic-pie-chart.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/moment.min.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/fullcalendar.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/jvectormap.min.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/world-merc.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/polyfill.js")"></script>
+    <script src="@Url.Content("~/Content/themes/js/main.js")"></script>
+    <script>
+        //document.addEventListener('contextmenu', event => event.preventDefault());
+        //$(document).keydown(function (event) {
+        //    if (event.keyCode == 123) {
+        //        return false;
+        //    } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+        //        return false;
+        //    }
+        //});
+    </script>
+</body>
+</html>

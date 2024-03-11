@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Chủ đề";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Topic.js")"></script>
+}
+
+<style>
+    .dxgvHeader_Office365 {
+        background-color: #1c53a3;
+        color: #fff;
+    }
+
+    .dxgv {
+        border-bottom: 1px solid #d1d1d1 !important;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <h2 style="color: #219653; font-weight:600;">Chủ đề</h2>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="#">Danh mục</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Chủ đề
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10"></h6>
+
+                    <div class="table-wrapper table-responsive">
+                        @using (Html.BeginForm())
+                        {
+                            Html.AntiForgeryToken();
+                            ViewContext.Writer.Write("<div id=\"contentTopic\" style=\"display:block;\">");
+                            Html.RenderPartial("GridTopicPartial");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlFilterTopic";
+    settings.HeaderText = "Lọc Danh Sách";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.HorizontalAlign = PopupAdaptiveHorizontalAlign.WindowRight;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(300);
+    settings.SettingsAdaptivity.MinHeight = Unit.Pixel(600);
+    settings.SettingsAdaptivity.MaxHeight = Unit.Pixel(650);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutFilterTopic";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitFilterTopic";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickFilterTopic";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutFilterTopic";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "cbType";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Kích hoạt", 0);
+                            c.Properties.Items.Add("Chưa kích hoạt", 1);
+                            c.Properties.ClientSideEvents.ValueChanged = "TypeValueChanged";
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()

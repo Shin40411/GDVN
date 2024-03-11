@@ -1,0 +1,29 @@
+﻿@Html.DevExpress().DropDownEdit(settings => {
+    settings.Name = "comboBoxGradeGroup";
+    settings.Width = Unit.Percentage(100);
+
+
+    settings.SetDropDownWindowTemplateContent(c => {
+        @Html.DevExpress().ListBox(gsettings => {
+            gsettings.Name = "listBoxGradeGroup";
+            gsettings.Style.Add("float", "left");
+            gsettings.Width = Unit.Percentage(100);
+            gsettings.Height = 350;
+            gsettings.Properties.EnableSelectAll = true;
+            gsettings.Properties.FilteringSettings.ShowSearchUI = true;
+            gsettings.Properties.EnableClientSideAPI = true;
+            gsettings.Properties.SelectionMode = ListEditSelectionMode.CheckColumn;
+            gsettings.Properties.ValueField = "ID";
+            gsettings.Properties.ValueType = typeof(int);
+            gsettings.Properties.Columns.Add("Name", "Khối lớp").Width = Unit.Percentage(50);
+            gsettings.Properties.Columns.Add("School.Name", "Trường").Width = Unit.Percentage(50);
+
+            gsettings.Properties.ClientSideEvents.SelectedIndexChanged = "GradeGroupSelectedIndexChanged";
+
+
+        }).BindList(Model).Render();
+    });
+    settings.Properties.AnimationType = AnimationType.None;
+    settings.Properties.ClientSideEvents.TextChanged = "GradeGroupTextChanged";
+
+}).GetHtml()

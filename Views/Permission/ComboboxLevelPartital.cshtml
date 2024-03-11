@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxLevel";
+    settings.Width = Unit.Percentage(100);
+
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.TextField = "Name";
+    settings.Properties.TextFormatString = "{0}";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+
+    settings.Properties.Columns.Add("Name", "Tên Cấp Độ", Unit.Percentage(60));
+    settings.Properties.Columns.Add("Value", "Giá Trị", Unit.Percentage(40));
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "LevelSelectedIndexChanged";
+    settings.Properties.ClientSideEvents.TextChanged = "LevelTextChanged";
+}).BindList(Model).GetHtml()

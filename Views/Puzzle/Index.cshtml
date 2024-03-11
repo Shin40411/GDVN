@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "Trò chơi ô chữ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/Custom/Css/Category/puzzle.css")" />
+}
+
+<style>
+    .uppercase input {
+        text-transform: uppercase;
+    }
+
+    .dxflRequired_Office365 {
+        color: #ff0000;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Trò chơi ô chữ</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/PuzzleSession/Index">Phiên trò chơi ô chữ</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                @ViewBag.SessionNameBF
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Ô chữ
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div id="FworkLeft"><img class="congrats" src="~/Content/Custom/Images/trungthuong.gif" /></div>
+            <div class="col-lg-12" id="content-view-puzzle">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10"></h6>
+
+                    <div class="table-wrapper table-responsive">
+
+                        @using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentPuzzle\" style=\"display:block;\">");
+                            Html.RenderPartial("PuzzleContentPartital");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <div id="FworkRight"><img class="congratr" src="~/Content/Custom/Images/trungthuong.gif" /></div>
+            <div class="col-lg-12" id="no-support" style="display: none;">
+                <div class="card-style mb-30">
+                    <div class="alert-box primary-alert">
+                        <div class="alert">
+                            <h4 class="alert-heading">THÔNG BÁO</h4>
+                            <p class="text-medium">
+                                Chức năng chỉ hỗ trợ trên giao diện máy vi tính .
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/PuzzleGame.js")"></script>
+<script>
+    if (document.body.clientWidth > 1200) {
+        document.getElementById("content-view-puzzle").style.display = "block";
+        document.getElementById("no-support").style.display = "none";
+    }
+    else {
+        document.getElementById("no-support").style.display = "block";
+        document.getElementById("content-view-puzzle").style.display = "none";
+    }
+</script>
+

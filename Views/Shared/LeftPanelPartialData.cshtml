@@ -1,0 +1,252 @@
+﻿<aside class="sidebar-nav-wrapper">
+    <div class="navbar-logo">
+        <a href="/Home/Index">
+            <img src="@Url.Content("~/Content/Custom/Images/logo.png")" width="150" alt="logo" />
+        </a>
+    </div>
+    <nav class="sidebar-nav">
+        <ul>
+
+            @if (GD.Web.SessionHelper.MenuGroupGlobal != null && GD.Web.SessionHelper.MenuGlobal != null)
+            {
+                if (GD.Web.SessionHelper.MenuGroupGlobal.Where(x => x.DisplayPosition == 1).ToList().Count() > 0)
+                {
+                    
+                }
+                foreach (var menuGroup in GD.Web.SessionHelper.MenuGroupGlobal.FindAll(x => x.DisplayPosition == 1).OrderBy(x => x.DisplayOrder))
+                {
+                    var menuOfGroup = GD.Web.SessionHelper.MenuGlobal.Where(x => x.GroupId == menuGroup.ID).ToList();
+                    if (menuOfGroup.Count() > 0)
+                    {
+                        var keyName = menuOfGroup.Select(x => x.Name).ToList();
+                        var urlImage = "~/Content/Custom/Images/" + menuGroup.ClassIcon;
+                        <li class="nav-item nav-item-has-children">
+                            <a href="#0"
+                               @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "" : "class=collapsed")
+                               data-bs-toggle="collapse"
+                               data-bs-target="#@menuGroup.Name"
+                               aria-controls="@menuGroup.Name"
+                               aria-expanded=@(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "true": "false")
+                               aria-label="Toggle navigation">
+                                <span class="icon">
+                                    <img src="@Url.Content(urlImage)" width="22" />
+                                </span>
+                                <span class="text">@Html.Raw(menuGroup.Caption)</span>
+                            </a>
+                            <ul id="@menuGroup.Name" class="collapse @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "show" : "") dropdown-nav">
+                                @foreach (var menu in menuOfGroup.OrderBy(x => x.DisplayOrder))
+                                {
+                                    <li>
+                                        @if (ViewBag.Menu == menu.Name.Trim())
+                                        {
+                                            <a href="@menu.URL" class="active">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@menu.URL">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </li>
+                    }
+
+                }
+
+            }
+
+            @if (GD.Web.SessionHelper.MenuGroupGlobal != null && GD.Web.SessionHelper.MenuGlobal != null)
+            {
+                if (GD.Web.SessionHelper.MenuGroupGlobal.Where(x => x.DisplayPosition == 3).ToList().Count() > 0)
+                {
+                    <span class="divider"><hr /></span>
+                    <span class="divider" style="padding-top:10px;font-weight:900;font-size: 0.8rem; text-transform: uppercase; font-family: Tahoma, sans-serif;">MÔ HÌNH 3D THCS</span>
+                }
+                foreach (var menuGroup in GD.Web.SessionHelper.MenuGroupGlobal.FindAll(x => x.DisplayPosition == 3).OrderBy(x => x.DisplayOrder))
+                {
+                    var menuOfGroup = GD.Web.SessionHelper.MenuGlobal.Where(x => x.GroupId == menuGroup.ID).ToList();
+                    if (menuOfGroup.Count() > 0)
+                    {
+                        var keyName = menuOfGroup.Select(x => x.Name).ToList();
+                        var urlImage = "~/Content/Custom/Images/" + menuGroup.ClassIcon;
+                        <li class="nav-item nav-item-has-children">
+                            <a href="#0"
+                               @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "" : "class=collapsed")
+                               data-bs-toggle="collapse"
+                               data-bs-target="#@menuGroup.Name"
+                               aria-controls="@menuGroup.Name"
+                               aria-expanded=@(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "true": "false")
+                               aria-label="Toggle navigation">
+                                <span class="icon">
+                                    <img src="@Url.Content(urlImage)" width="22" />
+                                </span>
+                                <span class="text">@Html.Raw(menuGroup.Caption)</span>
+                            </a>
+                            <ul id="@menuGroup.Name" class="collapse @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "show" : "") dropdown-nav">
+                                @foreach (var menu in menuOfGroup.OrderBy(x => x.DisplayOrder))
+                                {
+                                    <li>
+                                        @if (ViewBag.Menu == menu.Name.Trim())
+                                        {
+                                            <a href="@menu.URL" class="active">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@menu.URL">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </li>
+                    }
+
+                }
+
+            }
+
+            @if (GD.Web.SessionHelper.MenuGroupGlobal != null && GD.Web.SessionHelper.MenuGlobal != null)
+            {
+                if (GD.Web.SessionHelper.MenuGroupGlobal.Where(x => x.DisplayPosition == 4).ToList().Count() > 0)
+                {
+                    <span class="divider"><hr /></span>
+                    <span class="divider" style="padding-top:10px;font-weight:900;font-size: 0.8rem; text-transform: uppercase; font-family: Tahoma, sans-serif;">MÔ HÌNH 3D THPT</span>
+                }
+                foreach (var menuGroup in GD.Web.SessionHelper.MenuGroupGlobal.FindAll(x => x.DisplayPosition == 4).OrderBy(x => x.DisplayOrder))
+                {
+                    var menuOfGroup = GD.Web.SessionHelper.MenuGlobal.Where(x => x.GroupId == menuGroup.ID).ToList();
+                    if (menuOfGroup.Count() > 0)
+                    {
+                        var keyName = menuOfGroup.Select(x => x.Name).ToList();
+                        var urlImage = "~/Content/Custom/Images/" + menuGroup.ClassIcon;
+                        <li class="nav-item nav-item-has-children">
+                            <a href="#0"
+                               @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "" : "class=collapsed")
+                               data-bs-toggle="collapse"
+                               data-bs-target="#@menuGroup.Name"
+                               aria-controls="@menuGroup.Name"
+                               aria-expanded=@(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "true": "false")
+                               aria-label="Toggle navigation">
+                                <span class="icon">
+                                    <img src="@Url.Content(urlImage)" width="22" />
+                                </span>
+                                <span class="text">@Html.Raw(menuGroup.Caption)</span>
+                            </a>
+                            <ul id="@menuGroup.Name" class="collapse @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "show" : "") dropdown-nav">
+                                @foreach (var menu in menuOfGroup.OrderBy(x => x.DisplayOrder))
+                                {
+                                    <li>
+                                        @if (ViewBag.Menu == menu.Name.Trim())
+                                        {
+                                            <a href="@menu.URL" class="active">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@menu.URL">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </li>
+                    }
+
+                }
+
+            }
+
+
+
+            @if (GD.Web.SessionHelper.MenuGroupGlobal != null && GD.Web.SessionHelper.MenuGlobal != null)
+            {
+                if (GD.Web.SessionHelper.MenuGroupGlobal.Where(x => x.DisplayPosition == 2).ToList().Count() > 0)
+                {
+                    <span class="divider"><hr /></span>
+                }
+                foreach (var menuGroup in GD.Web.SessionHelper.MenuGroupGlobal.FindAll(x => x.DisplayPosition == 2).OrderBy(x => x.DisplayOrder))
+                {
+                    var menuOfGroup = GD.Web.SessionHelper.MenuGlobal.Where(x => x.GroupId == menuGroup.ID).ToList();
+                    if (menuOfGroup.Count() > 0)
+                    {
+                        var keyName = menuOfGroup.Select(x => x.Name).ToList();
+                        var urlImage = "~/Content/Custom/Images/" + menuGroup.ClassIcon;
+                        <li class="nav-item nav-item-has-children">
+                            <a href="#0"
+                               @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "" : "class=collapsed")
+                               data-bs-toggle="collapse"
+                               data-bs-target="#@menuGroup.Name"
+                               aria-controls="@menuGroup.Name"
+                               aria-expanded=@(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "true": "false")
+                               aria-label="Toggle navigation">
+                                <span class="icon">
+                                    <img src="@Url.Content(urlImage)" width="22" />
+                                </span>
+                                <span class="text">@Html.Raw(menuGroup.Caption)</span>
+                            </a>
+                            <ul id="@menuGroup.Name" class="collapse @(ViewBag.Menu != null && keyName.Contains(ViewBag.Menu) ? "show" : "") dropdown-nav">
+                                @foreach (var menu in menuOfGroup.OrderBy(x => x.DisplayOrder))
+                                {
+                                    <li>
+                                        @if (ViewBag.Menu == menu.Name.Trim())
+                                        {
+                                            <a href="@menu.URL" class="active">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@menu.URL">
+                                                <span class="text">
+                                                    @Html.Raw(menu.Caption)
+                                                </span>
+                                            </a>
+                                        }
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </li>
+                    }
+
+                }
+
+            }
+
+        </ul>
+    </nav>
+    <div class="promo-box" style="background-color: #1c53a3; color: #fff;">
+        <h3 style="color: #fff;">© 2024 GD VIỆT NAM</h3>
+        <p style="margin: 0;">BỘ HỌC LIỆU ĐIỆN TỬ</p>
+    </div>
+</aside>

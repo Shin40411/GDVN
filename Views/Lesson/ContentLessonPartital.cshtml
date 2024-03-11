@@ -1,0 +1,60 @@
+﻿@if (ViewBag.DataLesson != null && ViewBag.DataLesson.Count > 0)
+{
+    var listColor = new string[] { "primary-bg", "orange-bg", "success-bg", "warning-bg", "info-bg", "danger-bg" };
+    var listIcon = new string[] { "lni lni-video", "lni lni-image", "lni lni-empty-file" };
+    var indexColor = 0;
+
+    for (var i = 0; i < ViewBag.DataLesson.Count; i++)
+    {
+        var colorClass = listColor[indexColor];
+
+        if (indexColor > 4)
+        {
+            indexColor = 0;
+        }
+        else
+        {
+            indexColor++;
+        }
+        <div class="col">
+            <div class="card-style h-100" onclick="ViewFileContent('@ViewBag.DataLesson[i].Path')">
+                @if (ViewBag.DataLesson[i].PreviewImage != null && ViewBag.DataLesson[i].PreviewImage.Length > 0)
+                {
+                    <img src="@Url.Content("~/Content/Thumbnail/" + ViewBag.DataLesson[i].PreviewImage)" style="border-radius: 20px;" class="card-img-top img-fluid" height="350" alt="@Html.Raw(ViewBag.DataLesson[i].Name)">
+                }
+                else
+                {
+                    if (ViewBag.DataLesson[i].Path.Contains(".pptx") || ViewBag.DataLesson[i].Path.Contains(".ppt"))
+                    {
+                        <img src="@Url.Content("~/Content/powerpoint.png")" style="border-radius: 20px;" class="card-img-top img-fluid" height="350" alt="@Html.Raw(ViewBag.DataLesson[i].Name)">
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/Content/document-blank.png")" style="border-radius: 20px;" class="card-img-top img-fluid" height="350" alt="@Html.Raw(ViewBag.DataLesson[i].Name)">
+                    }
+
+                }
+                <div class="card-body">
+                    <div>
+                        <h5 class="card-title text-center">@Html.Raw(ViewBag.DataLesson[i].Name)</h5>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End Card -->
+        </div>
+    }
+}
+else
+{
+    <div class="col-lg-12">
+        <div class="alert-box danger-alert">
+            <div class="alert" style="background-color: #ffffff;">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p style="font-size: 15px;" class="text-medium">
+                    Chưa có dữ liệu giáo án.
+                </p>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,95 @@
+﻿@model List<GD.Web.Models.ScoreViewModel>
+
+@if (Model != null && Model.Count > 0)
+{
+    var x = 0;
+    <div class="col-lg-12">
+        <div class="table-wrapper table-responsive">
+            <table style="font-weight: 500; color: #262d3f; font-size: 14px;">
+                <thead>
+                    <tr>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="50px" class="name" rowspan="2">STT</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name" rowspan="2">Mã</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="300px" class="name" rowspan="2">Họ tên</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="130px" class="name" rowspan="2">Ngày sinh</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name" colspan="5">Điểm thường xuyên</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="180px" class="name" rowspan="2">Điểm giữa kỳ</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="180px" class="name" rowspan="2">Điểm cuối kỳ</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" width="220px" class="name" rowspan="2">Điểm trung bình</th>
+                    </tr>
+                    <tr>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name">Điểm thứ 1</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name">Điểm thứ 2</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name">Điểm thứ 3</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name">Điểm thứ 4</th>
+                        <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="150px" class="name">Điểm thứ 5</th>
+                    </tr>
+                    <!-- end table row-->
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        x++;
+                        <tr>
+                            <td style="text-align: center;vertical-align:central; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                @Html.Raw(x)
+                            </td>
+                            <td style="padding:5px;vertical-align:central; padding-left:10px; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                @Html.Raw(item.Code)
+                            </td>
+
+                            <td style="padding:5px;vertical-align:central; padding-left:10px; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                @Html.Raw(item.FullName)
+                            </td>
+                            <td style="text-align: center;vertical-align:central; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                @Html.Raw(item.BirthDay.ToString("dd/MM/yyyy"))
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGTXOne" id="PointDDGTXOne-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGTXOne')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGTXTwo" id="PointDDGTXTwo-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGTXTwo')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGTXThree" id="PointDDGTXThree-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGTXThree')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGTXFour" id="PointDDGTXFour-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGTXFour')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGTXFive" id="PointDDGTXFive-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGTXFive')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGGK" id="PointDDGGK-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGGK')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;">
+                                <input type="number" class="form-control" value="@item.PointDDGCK" id="PointDDGCK-@item.ID" onchange="OnChangePoint(@item.ID,'PointDDGCK')" />
+                            </td>
+                            <td style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;">
+                                <span id="dtb-@item.ID">
+                                    @(item.PointDTBMHK != null ? item.PointDTBMHK.ToString() : "Chưa có")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+
+
+                </tbody>
+            </table>
+            <!-- end table -->
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert-box primary-alert">
+        <div class="alert">
+            <h4 class="alert-heading">THÔNG BÁO</h4>
+            <p class="text-medium">
+                Chưa có dữ liệu chia lớp, vui lòng chia lớp trước.
+            </p>
+        </div>
+    </div>
+}
+

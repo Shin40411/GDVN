@@ -1,0 +1,95 @@
+﻿@model List<GD.Web.Models.AnswerViewModel>
+<div class="row align-items-center">
+    <div class="col" style="text-align: center;">
+        SỞ GIÁO DỤC VÀ ĐÀO TẠO
+    </div>
+    <!-- end col -->
+    <div class="col" style="text-align: center;">
+        ĐỀ THI KIỂM TRA HỌC KỲ
+    </div>
+    <!-- end col -->
+</div>
+<div class="row align-items-center">
+    <div class="col" style="text-align: center;">
+        TRƯỜNG THPT CHUYÊN ĐOÀN THỊ ĐIỂM
+    </div>
+    <!-- end col -->
+    <div class="col" style="text-align: center;">
+        Bài thi: Vật Lý lớp 6
+    </div>
+    <!-- end col -->
+</div>
+<div class="row align-items-center mb-20">
+    <div class="col" style="text-align: center;">
+        <i>(Đề thi có 1 trang)</i>
+    </div>
+    <!-- end col -->
+    <div class="col" style="text-align: center;">
+        Thời gian làm bài: 45 phút
+    </div>
+    <!-- end col -->
+</div>
+<div class="row align-items-center">
+    <div class="col" style="text-align: center;">
+        &nbsp;
+    </div>
+    <!-- end col -->
+    <div class="col" style="text-align: right;">
+        <b style="border-style: solid; margin-right:10px;padding:5px;">Mã đề: ABCXYZ</b>
+    </div>
+    <!-- end col -->
+</div>
+@if (ViewBag.QuestionDetailData != null && ViewBag.QuestionDetailData.Count > 0)
+{
+
+        int STT = 1;
+        for (var item = 0; item < ViewBag.QuestionDetailData.Count; item++)
+        {
+
+            <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                <div style="padding-left:33px;">
+                    <b>Câu @Html.Raw(STT):</b><i>(@Html.Raw(ViewBag.QuestionDetailData[item].TypeQuestion.Name))</i>
+                    <div style="padding-top:10px;">
+                        @Html.Raw(ViewBag.QuestionDetailData[item].Content)
+                    </div>
+                </div>
+
+
+                    @if (Model != null)
+                    {
+                        var answerList = Model.Where(x => x.QuestionId == ViewBag.QuestionDetailData[item].ID).ToList();
+                        if (answerList.Count > 0)
+                        {
+                            <div class="row" style="padding-left:80px;padding-top:10px;">
+                                <ol type="A" style="list-style-type: upper-alpha;">
+                                    @{
+                                        
+                                        for (var i = 0; i < answerList.Count; i++)
+                                        {
+                                            <li>@Html.Raw(answerList[i].Content)</li>
+                                        }
+                                    }
+                                </ol>
+                                
+                            </div>
+                        }
+
+                    }
+
+
+            </div>
+            STT++;
+        }
+
+}
+else
+{
+    <div class="alert-box primary-alert">
+        <div class="alert">
+            <h4 class="alert-heading">THÔNG BÁO</h4>
+            <p class="text-medium">
+                Chưa có dữ liệu độ câu hỏi.
+            </p>
+        </div>
+    </div>
+}

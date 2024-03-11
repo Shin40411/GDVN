@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxEmployee";
+    settings.Width = Unit.Percentage(100);
+
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.TextField = "Name";
+    settings.Properties.TextFormatString = "{0} - {1}";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+
+    settings.Properties.Columns.Add("Code", "Mã định danh ", Unit.Percentage(40));
+    settings.Properties.Columns.Add("FullName", "Họ tên", Unit.Percentage(60));
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "EmployeeSelectedIndexChanged";
+    settings.Properties.ClientSideEvents.TextChanged = "EmployeeTextChanged";
+}).BindList(Model).GetHtml()

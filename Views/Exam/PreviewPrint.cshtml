@@ -1,0 +1,439 @@
+﻿@model List<GD.Web.Models.AnswerViewModel>
+@{
+    Layout = null;
+    string[] arrayAnwser = { "A", "B", "C", "D" };
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+        Xem đề thi
+    </title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    <link rel="icon" href="@Url.Content("~/Content/Custom/Images/gdlogo.ico")" type="image/x-icon" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/jquery.min.js")"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/Custom/Css/Category/pagea4.css")" />
+    <style>
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .print {
+            font-size: 25px;
+            font-family: "Times New Roman", Times, serif;
+        }
+    </style>
+</head>
+<body class="A4 landscape">
+
+    <section class="sheet padding-10mm print" id="content">
+
+        <div class="row">
+            <div class="col uppercase" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.ShoolData.ManageBy.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.TestData.Description.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center">
+            <div class="col uppercase" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.ShoolData.Name.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b>Môn học: @Html.Raw(ViewBag.CourseData.Name.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center mb-20">
+            <div class="col" style="text-align: center;">
+                <span id="numberPage"></span>
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b><i>Thời gian làm bài:  @Html.Raw(ViewBag.TestData.Time) phút</i></b> <span style="font-size: 18px;">(Không kể thời gian phát đề)</span>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center">
+            <div class="col" style="text-align: center;">
+                &nbsp;
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: right;padding-top:20px;">
+                @if (ViewBag.TestData.Name.ToString() == "000")
+                {
+                    <b style="border-style: solid; margin-right:10px;padding:5px;">Mã đề: GỐC</b>
+                }
+                else
+                {
+                    <b style="border-style: solid; margin-right:10px;padding:5px;">Mã đề: @Html.Raw(ViewBag.TestData.Name.ToString().ToUpper())</b>
+                }
+
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center" style="margin: 10px 10px 10px 0px">
+            <div style="display: flex; border: 1px solid #000; padding-left: 10px;">
+                <div style="width: 60%; display: flex; flex-direction: column;">
+                    <div>
+                        <b>Trường: @Html.Raw(ViewBag.ShoolData.Name.ToString())</b>
+                    </div>
+                    <div style="display: flex; gap: 4px;">
+                        <p>Lớp: ............. </p>
+                        <p>Phòng thi: .......... </p>
+                        <p>Số báo danh: ............... </p>
+                    </div>
+                    <div>
+                        <p>Họ và tên học sinh:........................................................</p>
+                    </div>
+                </div>
+                <div style="width: 40%; border-left: 1px solid #000; padding-left: 10px;">
+                    <div style="height: 100%;display: flex; flex-direction: column; justify-content: center">
+                        <p>Giám thị 1:</p>
+                        <p>Giám thị 2:</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-left: 10px; height: 120px;">
+                <div style="width: 50%; display: flex; justify-content: space-between;">
+                    <div style="width: 50%; border-right: 1px solid #000; display: flex; justify-content: center;">
+                        <p>Điểm bằng số</p>
+                    </div>
+                    <div style="width: 50%;  display: flex; justify-content: center;">
+                        <p>Điểm bằng chữ</p>
+                    </div>
+                </div>
+                <div style="width: 50%; border-left: 1px solid #000; padding-left: 10px; display: flex; justify-content: center;">
+                    <p>Lời phê của giám khảo</p>
+                </div>
+            </div>
+
+        </div>
+        @if (ViewBag.TestData.Name.ToString() == "000")
+        {
+
+        }
+        else
+        {
+            <div class="row align-items-center" style="margin: 10px 10px 10px 0px">
+                <div class="d-flex justify-content-center"><h3 style="font-weight: bold;">BẢNG TRẢ LỜI TRẮC NGHIỆM</h3><span style="font-size: 20px;font-style: italic;">(Học sinh chọn phương án đúng nhất và điền vào bảng dưới đây) </span></div>
+                <table class="table table-bordered border-dark">
+                    <tbody>
+                        <tr>
+                            <th style="width:0">Câu</th>
+                            @{
+                                var STT = 1;
+                                for (var i = 0; i < ViewBag.ChildQuestion.Count; i++)
+                                {
+                                    <th style="text-align: center;">@STT</th>
+                                    STT++;
+                                    if (STT == 16)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        </tr>
+                        <tr>
+                            <th style="width:0">Đáp án</th>
+                            @for (int i = 1; i < STT; i++)
+                            {
+                                <th style="width: 60px;"></th>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+                @if (STT == 16)
+                {
+                    <table class="table table-bordered border-dark">
+                        <tbody>
+                            <tr>
+                                <th style="width:0">Câu</th>
+                                @{
+                                    for (var i = 16; i <= ViewBag.ChildQuestion.Count; i++)
+                                    {
+                                        <th style="text-align: center;">@STT</th>
+                                        STT++;
+
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                <th style="width:0">Đáp án</th>
+                                @for (int i = 16; i < STT; i++)
+                                {
+                                    <th style="width: 60px;"></th>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+
+        <div class="align-items-center">
+            @if (ViewBag.TestData != null && ViewBag.LevelQuestionData != null)
+            {
+                if (ViewBag.TypeQuestionData.Count < 21)
+                {
+                    for (var type = 0; type < ViewBag.TypeQuestionData.Count; type++)
+                    {
+                        <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                            <div style="padding-left:33px; ">
+                                <h5 style="font-weight: bold; font-size: 1.4rem;">I. PHẦN @Html.Raw(ViewBag.TypeQuestionData[type].Name.ToString().ToUpper()): (@Html.Raw(ViewBag.PointChoice == null ? 0 : ViewBag.PointChoice) điểm)</h5>
+                            </div>
+                        </div>
+                        if (ViewBag.TestData.Name.ToString() == "000")
+                        {
+                            var STTChoice = 1;
+                            for (var level = 0; level < ViewBag.LevelQuestionData.Count; level++)
+                            {
+                                if (ViewBag.LevelQuestionData[level].TypeId == ViewBag.TypeQuestionData[type].ID)
+                                {
+
+                                    var QuestionData = ViewBag.LevelQuestionData[level].Questions;
+
+                                    for (var item = 0; item < QuestionData.Count; item++)
+                                    {
+                                        <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                                            <div style="padding-left:33px;">
+                                                <b>Câu @STTChoice: </b><span>@QuestionData[item].Name </span>
+                                                <div style="padding-top:5px;">
+
+                                                </div>
+                                            </div>
+                                            @if (Model != null)
+                                            {
+                                                var answerList = Model.Where(x => x.QuestionId == QuestionData[item].ID).ToList();
+                                                int lenghtAnswerList = 0;
+                                                foreach (var answer in answerList)
+                                                {
+                                                    lenghtAnswerList += answer.Name.Length;
+                                                }
+                                                if (answerList.Count > 0)
+                                                {
+                                                    <div class="row d-flex ms-4 justify-content-between me-4">
+                                                        @for (var j = 0; j < answerList.Count; j++)
+                                                        {
+                                                            if (lenghtAnswerList < 40)
+                                                            {
+                                                                if (answerList[j].Correct)
+                                                                {
+                                                                    <div class="col" style="margin-bottom: 20px; text-align: justify;"><span style="text-decoration: underline;">@arrayAnwser[j]</span>. @answerList[j].Name</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col" style="margin-bottom: 20px; text-align: justify;">@arrayAnwser[j]. @answerList[j].Name</div>
+                                                                }
+                                                            }
+                                                            else if (lenghtAnswerList > 40 && lenghtAnswerList < 145)
+                                                            {
+                                                                if (answerList[j].Correct)
+                                                                {
+                                                                    <div class="col-6 col-sm-6" style="margin-bottom: 20px;"><span style="text-decoration: underline;">@arrayAnwser[j]</span>. @answerList[j].Name</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-6 col-sm-6" style="margin-bottom: 20px;">@arrayAnwser[j]. @answerList[j].Name</div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (answerList[j].Correct)
+                                                                {
+                                                                    <div class="col-12"><span style="text-decoration: underline;">@arrayAnwser[j]</span>. @answerList[j].Name</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-12">@arrayAnwser[j]. @answerList[j].Name</div>
+                                                                } 
+                                                            }
+
+                                                        }
+                                                    </div>
+
+                                                }
+
+                                            }
+                                        </div>
+                                        STTChoice++;
+                                    }
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.ChildQuestion != null)
+                            {
+                                var STTChoice = 1;
+                                for (var i = 0; i < ViewBag.ChildQuestion.Count; i++)
+                                {
+                                    <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                                        <div style="padding-left:33px;">
+                                            <b>Câu @STTChoice: </b><span>@ViewBag.ChildQuestion[i].Name </span>
+                                            <div style="padding-top:5px;">
+
+                                            </div>
+                                        </div>
+
+                                        @if (Model != null)
+                                        {
+                                            var answerList = Model.Where(x => x.QuestionId == ViewBag.ChildQuestion[i].ID).ToList();
+                                            int lenghtAnswerList = 0;
+                                            foreach (var answer in answerList)
+                                            {
+                                                lenghtAnswerList += answer.Name.Length;
+                                            }
+                                            if (answerList.Count > 0)
+                                            {
+                                                <div class="row d-flex ms-4 justify-content-between me-4">
+                                                    @for (var j = 0; j < answerList.Count; j++)
+                                                    {
+                                                        if (lenghtAnswerList < 40)
+                                                        {
+                                                            <div class="col" style="margin-bottom: 20px; text-align: justify;">@arrayAnwser[j]. @answerList[j].Name</div>
+                                                        }
+                                                        else if (lenghtAnswerList > 40 && lenghtAnswerList < 145)
+                                                        {
+                                                            <div class="col-6 col-sm-6" style="margin-bottom: 20px;">@arrayAnwser[j]. @answerList[j].Name</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-12">
+                                                                @arrayAnwser[j]. @answerList[j].Name
+                                                            </div>
+                                                        }
+
+                                                    }
+                                                </div>
+
+                                            }
+
+                                        }
+                                    </div>
+                                    STTChoice++;
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+                if (ViewBag.QuestionEssay.Count != 0)
+                {
+                    <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                        <div style="padding-left: 33px; font-weight: bold;">
+                            <h5 style="font-weight: bold; font-size: 1.4rem;">PHẦN TỰ LUẬN: (@Html.Raw(ViewBag.PointEssay == null ? 0 : ViewBag.PointEssay) điểm)</h5>
+                        </div>
+                    </div>
+                    var STTEssay = 1;
+                    for (var item = 0; item < ViewBag.QuestionEssay.Count; item++)
+                    {
+                        <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+                            <div style="padding-left:33px; ">
+                                <b>Câu @Html.Raw(STTEssay): (@Html.Raw(ViewBag.QuestionEssay[item].Point == null ? 0 : ViewBag.QuestionEssay[item].Point) điểm)</b>
+                                <div style="padding-top:5px;">
+                                    <span style="font-size: 25px;">@ViewBag.QuestionEssay[item].Name</span>
+                                </div>
+                            </div>
+                        </div>
+                        STTEssay++;
+                    }
+                }
+                <div class="d-flex justify-content-center fw-bold">Hết</div>
+
+            }
+            else
+            {
+                <div class="alert-box primary-alert">
+                    <div class="alert">
+                        <h4 class="alert-heading">THÔNG BÁO</h4>
+                        <p class="text-medium">
+                            Chưa có dữ liệu độ câu hỏi.
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <script>
+        window.onload = addPageNumbers;
+
+        function addPageNumbers() {
+
+            var totalPages = Math.ceil(document.getElementById("content").scrollHeight / 1631.59);  //842px A4 pageheight for 72dpi, 1123px A4 pageheight for 96dpi,
+            var numberHtml = "<i>(Đề thi có " + totalPages + " trang)</i>";
+            $("#numberPage").html(numberHtml);
+
+            for (var i = 1; i <= totalPages; i++) {
+                var pageNumberDiv = document.createElement("div");
+                var pageNumber = document.createTextNode("" + i + " / " + totalPages);
+                pageNumberDiv.style.position = "absolute";
+                pageNumberDiv.style.top = "calc((" + i + " * (297mm - 0.5px + 451px)) - 40px)"; //297mm A4 pageheight; 0,5px unknown needed necessary correction value; additional wanted 40px margin from bottom(own element height included)
+                pageNumberDiv.style.height = "16px";
+                pageNumberDiv.appendChild(pageNumber);
+                document.body.insertBefore(pageNumberDiv, document.getElementById("content"));
+                pageNumberDiv.style.left = "calc(100% - (" + pageNumberDiv.offsetWidth + "px + 20px))";
+            }
+
+        }
+
+        var typeExport = '@ViewBag.TypeExport';
+
+        if (Number(typeExport) == 1) {
+            window.print();
+        }
+
+        if (Number(typeExport) == 2) {
+            ExportWord("content", "dethicon");
+        }
+
+        function ExportWord(element, filename = '') {
+            var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+            var postHtml = "</body></html>";
+            var html = preHtml + document.getElementById(element).innerHTML + postHtml;
+
+            var blob = new Blob(['\ufeff', html], {
+                type: 'application/msword'
+            });
+            
+            // Specify link url
+            var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+
+            // Specify file name
+            filename = filename ? filename + '.doc' : 'document.doc';
+
+            // Create download link element
+            var downloadLink = document.createElement("a");
+
+            document.body.appendChild(downloadLink);
+
+            if (navigator.msSaveOrOpenBlob) {
+                navigator.msSaveOrOpenBlob(blob, filename);
+            } else {
+                // Create a link to the file
+                downloadLink.href = url;
+
+                // Setting the file name
+                downloadLink.download = filename;
+
+                //triggering the function
+                downloadLink.click();
+            }
+
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+</body>
+</html> 

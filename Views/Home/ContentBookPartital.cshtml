@@ -1,0 +1,31 @@
+﻿@if (ViewBag.DataBook != null && ViewBag.DataBook.Count > 0)
+{
+    for (var i = 0; i < ViewBag.DataBook.Count; i++)
+    {
+        <div class="col">
+            <a class="card-style project-card h-100" href="/Lesson/Index?bookId=@ViewBag.DataBook[i].ID">
+                <img src="~/Content/@ViewBag.DataBook[i].PreviewImage" style="border-radius: 20px;" class="card-img-top img-fluid" height="350" alt="dsaas-@i">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        <h5>@Html.Raw(@ViewBag.DataBook[i].Name)</h5>
+                    </div>
+
+                </div>
+            </a>
+            <!-- End Card -->
+        </div>
+    }
+}
+else
+{
+    <div class="col-lg-12">
+        <div class="alert-box danger-alert">
+            <div class="alert" style="background-color: #ffffff;">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p style="font-size: 15px;" class="text-medium">
+                    Chưa có dữ liệu giáo án.
+                </p>
+            </div>
+        </div>
+    </div>
+}

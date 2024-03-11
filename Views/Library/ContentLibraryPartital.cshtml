@@ -1,0 +1,51 @@
+﻿@if (ViewBag.DataLibrary != null && ViewBag.DataLibrary.Count > 0)
+{
+    var listColor = new string[] { "primary-bg", "orange-bg", "success-bg", "warning-bg", "info-bg", "danger-bg" };
+    var listIcon = new string[] { "lni lni-video", "lni lni-image", "lni lni-empty-file" };
+    var indexColor = 0;
+    for (var i = 0; i < ViewBag.DataLibrary.Count; i++)
+    {
+        var colorClass = listColor[indexColor];
+        if (indexColor > 4)
+        {
+            indexColor = 0;
+        }
+        else
+        {
+            indexColor++;
+        }
+        <div class="col">
+            <div class="card-style h-100">
+                <div onclick="ViewFileContent('@ViewBag.DataLibrary[i].Name', '@ViewBag.DataLibrary[i].Path' )">
+                    @if (ViewBag.DataLibrary[i].PreviewImage != null && ViewBag.DataLibrary[i].PreviewImage.Length > 0)
+                    {
+                        <img src="@Url.Content("~/Content/Thumbnail/" + ViewBag.DataLibrary[i].PreviewImage)" class="card-img-top img-fluid" height="350" alt="@Html.Raw(ViewBag.DataLibrary[i].Name)">
+                    }
+                    else
+                    {
+                        <img src="@Url.Content("~/Content/document-blank.png")" class="card-img-top img-fluid" height="350" alt="@Html.Raw(ViewBag.DataLibrary[i].Name)">
+                    }
+                                <div class="card-body">
+                                    <div>
+                                        <h5 class="card-title text-center">@Html.Raw(ViewBag.DataLibrary[i].Name)</h5>
+                                    </div>
+                                </div>
+                </div>
+                <span class="btn btn-success" title="Sao chép URL tập tin" style="position: absolute; bottom: 0; right: 0; margin: 10px;" onclick="copyPath(this, '@ViewBag.DataLibrary[i].Path')">Sao chép <i class="lni lni-link"></i></span>
+            </div>    
+        </div>
+    }
+}
+else
+{
+    <div class="col-lg-12">
+        <div class="alert-box danger-alert">
+            <div class="alert" style="background-color: #ffffff;">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p class="text-medium">
+                    Chưa có dữ liệu giáo án.
+                </p>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,9 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxGradeScoreReportFilter";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn lớp";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseScoreReportFilterSelectedIndexChanged";
+}).BindList(ViewBag.GradeScoreReportFilterData).GetHtml()

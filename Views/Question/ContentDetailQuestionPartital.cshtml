@@ -1,0 +1,128 @@
+﻿@if (ViewBag.QuestionDetailData != null)
+{
+    <input type="text" id="IDQuestionViewQuestion" value="@Html.Raw(ViewBag.QuestionDetailData.ID)" hidden />
+    <input type="text" id="TypeChoiceQuestionViewQuestion" value="@Html.Raw(ViewBag.TypeChoiceQuestionData)" hidden />
+    <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+        <div style="position: fixed; left: 38px; top: auto;">
+
+            <button class="border-0 bg-transparent h3" onclick="EditQuestionDetail(@Html.Raw(ViewBag.QuestionDetailData.ID), @Html.Raw(ViewBag.QuestionDetailData.TypeId), @Html.Raw(ViewBag.QuestionDetailData.LevelId), '@Html.Raw(ViewBag.QuestionDetailData.ManyAnswer)', @Html.Raw(ViewBag.QuestionDetailData.LineNumber), @Html.Raw(ViewBag.QuestionDetailData.TopicId), @Html.Raw(ViewBag.QuestionDetailData.Point))">
+                <i class="lni lni-pencil-alt"></i>
+            </button>
+        </div>
+        <div style="padding-left:33px;">
+            @Html.Raw(ViewBag.QuestionDetailData.Content)
+        </div>
+
+    </div>
+    if (ViewBag.AnswerDetailData != null && ViewBag.AnswerDetailData.Count > 0)
+    {
+        string[] nameSTT = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
+        for (var i = 0; i < ViewBag.AnswerDetailData.Count; i++)
+        {
+            <div class="col-md-6 col-lg-12 col-xl-6 mb-10">
+
+                <div id="@nameSTT[i]" class="alert-box gray-alert pl-100">
+                    <div class="left">
+                        <h5 class="text-bold" style="-webkit-transform: none; transform: none;">@Html.Raw(nameSTT[i])</h5>
+                    </div>
+                    <div id="@i" onclick="chooseanswerQuestion(`@i`)" class="card-style-6 answerBorderGray">
+                        <div>
+                            @Html.Raw(ViewBag.AnswerDetailData[i].Content)
+                        </div>
+                        <button class="border-0 bg-transparent h3" style="position: absolute; right: 0px; bottom: 0px; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; background: #efefef; color: #262d3f; display: flex; justify-content: center; align-items: center;" onclick="EditAnswerDetail(@Html.Raw(ViewBag.AnswerDetailData[i].ID), '@Html.Raw(ViewBag.AnswerDetailData[i].Correct)')">
+                            <i class="lni lni-pencil-alt"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            @*if (ViewBag.AnswerDetailData[i].Correct == true)
+                {
+                    <div class="col-md-6 col-lg-12 col-xl-6 mb-10">
+
+                        <div class="alert-box primary-alert pl-100">
+                            <div class="left">
+                                <h5 class="text-bold" style="-webkit-transform: none; transform: none;">@Html.Raw(nameSTT[i])</h5>
+
+                            </div>
+                            <div class="card-style-6" style="border: 1px solid #5d657b;">
+
+                                <div>
+                                    @Html.Raw(ViewBag.AnswerDetailData[i].Content)
+                                </div>
+                                <button class="border-0 bg-transparent h3" style="position: absolute; right: 0px; bottom: 0px; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; background: #efefef; color: #262d3f; display: flex; justify-content: center; align-items: center;" onclick="EditAnswerDetail(@Html.Raw(ViewBag.AnswerDetailData[i].ID), '@Html.Raw(ViewBag.AnswerDetailData[i].Correct)')">
+                                    <i class="lni lni-pencil-alt"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-6 col-lg-12 col-xl-6 mb-10">
+
+                        <div class="alert-box gray-alert pl-100">
+                            <div class="left">
+                                <h5 class="text-bold" style="-webkit-transform: none; transform: none;">@Html.Raw(nameSTT[i])</h5>
+                            </div>
+                            <div class="card-style-6" style="border: 1px solid #5d657b;">
+                                <div>
+                                    @Html.Raw(ViewBag.AnswerDetailData[i].Content)
+                                </div>
+                                <button class="border-0 bg-transparent h3" style="position: absolute; right: 0px; bottom: 0px; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; background: #efefef; color: #262d3f; display: flex; justify-content: center; align-items: center;" onclick="EditAnswerDetail(@Html.Raw(ViewBag.AnswerDetailData[i].ID), '@Html.Raw(ViewBag.AnswerDetailData[i].Correct)')">
+                                    <i class="lni lni-pencil-alt"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                }*@
+        }
+    }
+    <style>
+        .answerBorderSuccess {
+            border: 1px solid #219653;
+        }
+        .answerBorderPrimary {
+            border: 1px solid #4a6cf7;
+        }
+
+        .answerBorderGray {
+            border: 1px solid #5d657b;
+        }
+        .answerBorderError {
+            border: 1px solid #d50100;
+        }
+    </style>
+    <script>
+    function chooseanswerQuestion(e) {
+        var nameSTT = [ "A", "B", "C", "D", "E", "F", "G", "H" ];
+        for (let i = 0; i < `@ViewBag.AnswerDetailData.Count`; i++) {
+            var element = document.getElementById(i);
+            var elementbutton = document.getElementById(nameSTT[i]).firstElementChild;
+            if (element.classList.contains("answerBorderPrimary")) {
+                element.classList.remove("answerBorderPrimary");
+                element.classList.add("answerBorderGray");
+                elementbutton.style.backgroundColor = "#5d657b";
+            }
+                
+        }
+        var answerQuestion = document.getElementById(e);
+        answerQuestion.classList.remove("answerBorderGray");
+        answerQuestion.classList.add("answerBorderPrimary");
+        var answerQuestionButton = document.getElementById(nameSTT[e]).firstElementChild;
+        answerQuestionButton.style.backgroundColor = "#4a6cf7";
+
+
+    }
+        var check = Number(document.getElementById("TypeChoiceQuestionViewQuestion").value);
+
+        if (check == 0) {
+            document.getElementById("button-addanswerview").style.display = "none";
+        }
+        else {
+            document.getElementById("button-addanswerview").style.display = "none";
+        }
+    </script>
+}

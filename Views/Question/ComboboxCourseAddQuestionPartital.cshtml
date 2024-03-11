@@ -1,0 +1,14 @@
+﻿
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "comboBoxCourseAddQuestion";
+    settings.Width = Unit.Percentage(100);
+    settings.SelectedIndex = 0;
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.NullText = "Chọn môn học";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseAddQuestionSelectedIndexChanged";
+}).BindList(ViewBag.CourseData).GetHtml()

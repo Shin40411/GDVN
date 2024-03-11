@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxCourse";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn môn học";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+    settings.Properties.DropDownWidth = Unit.Pixel(500);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+    settings.Properties.TextFormatString = "{0}";
+    settings.Properties.Columns.Add("Name", "Tên môn học", Unit.Percentage(50));
+    settings.Properties.Columns.Add("GradeGroup.Name", "Khối lớp", Unit.Percentage(50));
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseSelectedIndexChanged";
+}).BindList(Model).GetHtml()

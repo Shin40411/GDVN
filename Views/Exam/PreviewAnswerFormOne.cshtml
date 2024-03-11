@@ -1,0 +1,155 @@
+﻿@model List<GD.Web.Models.AnswerViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+        Xem phiếu trả lời
+    </title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    <link rel="icon" href="@Url.Content("~/Content/Custom/Images/gdlogo.ico")" type="image/x-icon" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/jquery.min.js")"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/Custom/Css/Category/pagea4.css")" />
+    <style>
+        .uppercase {
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="A4 landscape">
+
+    <section class="sheet padding-10mm" id="content">
+
+        <div class="row align-items-center">
+            <div class="col uppercase" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.ShoolData.ManageBy.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.TestData.Description.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center">
+            <div class="col uppercase" style="text-align: center;">
+                <b>@Html.Raw(ViewBag.ShoolData.Name.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b>Môn học: @Html.Raw(ViewBag.CourseData.Name.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center mb-20">
+            <div class="col" style="text-align: center;">
+                ----------
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: center;">
+                <b><i>Thời gian làm bài:  @Html.Raw(ViewBag.TestData.Time) phút</i></b> (Không kể thời gian phát đề)
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center">
+            <div class="col" style="text-align: center;">
+                &nbsp;
+            </div>
+            <!-- end col -->
+            <div class="col" style="text-align: right;padding-top:20px;">
+                <b style="border-style: solid; margin-right:10px;padding:5px;">Mã đề: @Html.Raw(ViewBag.TestData.Name.ToString().ToUpper())</b>
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row align-items-center" style="padding-left:20px; padding-bottom:10px;padding-top:25px;">
+            <div class="col" style="text-align: center;">
+                <h3>PHIẾU TRẢ LỜI TRẮC NGHIỆM</h3>
+            </div>
+           
+        </div>
+        <div class="row align-items-center" style="padding-left:20px; padding-bottom:10px;padding-top:25px;">
+            <div class="col" style="text-align: left;">
+                <b>Họ tên:</b>......................................................................
+            </div>
+            <div class="col" style="text-align: left;">
+                <b>Lớp:</b>.........................................................................
+            </div>
+            <div class="col" style="text-align: left;">
+                <b>Số báo danh:</b>...........................................................
+            </div>
+        </div>
+
+        @if (ViewBag.TestData != null)
+        {
+        <div class="col-md-12 col-lg-12 col-xl-12 mb-30">
+            <table width="99%">
+                <tr>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 1</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 2</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" width="250px">Số phách</th>
+                </tr>
+                <tr>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" height="100px"></td>
+                </tr>
+            </table>
+            <div style="margin-top:20px; padding-left:5px; border-bottom: 1px dotted #dee2e6;">
+                <img src="@Url.Content("~/Content/Custom/Images/cut.png")" width="20" />
+            </div>
+            <table width="99%" style="margin-top:30px;">
+                <tr>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 1</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 2</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" width="250px">Số phách</th>
+                </tr>
+                <tr>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" height="100px"></td>
+                </tr>
+            </table>
+            <table width="99%">
+                <tr>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 1</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" width="250px">Cán bộ coi thi 2</th>
+                    <th style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" width="250px">Số phách</th>
+                </tr>
+                <tr>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border-left:1px solid #dee2e6;border-bottom:1px solid #dee2e6;border-top:1px solid #dee2e6;" height="100px"></td>
+                    <td style="padding:5px;vertical-align:central; text-align: center; border:1px solid #dee2e6;" height="100px"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4 col-lg-4 col-xl-4 mb-30">
+            
+        </div>
+        <div class="col-md-8 col-lg-8 col-xl-8 mb-30">
+
+        </div>
+        }
+        else
+        {
+            <div class="alert-box primary-alert">
+                <div class="alert">
+                    <h4 class="alert-heading">THÔNG BÁO</h4>
+                    <p class="text-medium">
+                        Chưa có dữ liệu độ câu hỏi.
+                    </p>
+                </div>
+            </div>
+        }
+    </section>
+
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+﻿@model List<GD.Web.Models.ApplicationUserViewModel>
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "gvApplicationUser";
+        settings.KeyFieldName = "Id";
+        settings.CallbackRouteValues = new
+        {
+            Controller = "Permission",
+            Action = "GridApplicationUserPartial"
+        };
+        settings.ClientSideEvents.BeginCallback = "CFOnBeginCallBackApplicationUser";
+        settings.ClientSideEvents.Init = "CFInitGridviewApplicationUser";
+        settings.ClientSideEvents.FocusedRowChanged = "OnGridFocusedRowChangedApplicationUser";
+
+
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsPopup.EditForm.Width = 1000;
+        settings.SettingsDataSecurity.AllowReadUnlistedFieldsFromClientApi = DefaultBoolean.True;
+
+        settings.ControlStyle.CssClass = "grid-view";
+        settings.Width = Unit.Percentage(100);
+
+        settings.Styles.Cell.Wrap = DefaultBoolean.False;
+        settings.Styles.PagerBottomPanel.CssClass = "pager";
+        settings.Styles.FocusedRow.CssClass = "focused";
+
+        settings.SettingsPopup.EditForm.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+        settings.SettingsPopup.EditForm.SettingsAdaptivity.MinWidth = Unit.Percentage(90);
+        settings.SettingsPopup.EditForm.SettingsAdaptivity.HorizontalAlign = PopupAdaptiveHorizontalAlign.WindowCenter;
+        settings.SettingsPopup.EditForm.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+        settings.SettingsText.PopupEditFormCaption = "CẬP NHẬT DỮ LIỆU";
+        settings.EditFormLayoutProperties.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+        settings.EditFormLayoutProperties.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 650;
+        settings.EditFormLayoutProperties.SettingsItems.VerticalAlign = FormLayoutVerticalAlign.Top;
+
+        settings.SettingsPager.PageSize = 5;
+        settings.SettingsPager.Summary.Text = "Trang: {0} - {1} ({2} trang)";
+        settings.SettingsPager.PageSizeItemSettings.Caption = "Số trang:";
+        settings.CommandColumn.ButtonRenderMode = GridCommandButtonRenderMode.Image;
+        settings.SettingsCommandButton.UpdateButton.Image.IconID = DevExpress.Web.ASPxThemes.IconID.SaveSave16x16gray;
+        settings.SettingsCommandButton.UpdateButton.Text = "Lưu";
+        settings.SettingsCommandButton.CancelButton.Image.IconID = DevExpress.Web.ASPxThemes.IconID.ActionsCancel16x16gray;
+        settings.SettingsCommandButton.CancelButton.Text = "Hủy";
+
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "5", "10", "15", "20", "50" };
+
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsExport.EnableClientSideExportAPI = true;
+        settings.SettingsExport.ExcelExportMode = DevExpress.Export.ExportType.DataAware;
+
+        settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCells;
+        //settings.Settings.ShowFilterRow = true;
+        settings.Toolbars.Add(toolbar =>
+        {
+            toolbar.Enabled = true;
+            toolbar.Position = GridToolbarPosition.Top;
+
+            toolbar.ItemAlign = GridToolbarItemAlign.Right;
+            toolbar.Items.Add(i =>
+            {
+                i.Image.IconID = DevExpress.Web.ASPxThemes.IconID.FormatListbullets16x16;
+                i.ItemStyle.CssClass = "btn btn-outline-primary";
+                if (User.IsInRole("AddApplicationUser"))
+                {
+                    
+                }
+                i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.ActionsAdditem16x16;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "AddDataApplicationUser";
+                        s.Text = "Thêm";
+
+                    });
+                if (User.IsInRole("EditApplicationUser"))
+                {
+                    
+                }
+                i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.EditCopy16x16;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "EditDataApplicationUser";
+                        s.Text = "Sửa";
+
+                    });
+                i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.ActionsResetchanges16x16devav;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "ResetPasswordApplicationUser";
+                        s.Text = "Khôi phục";
+
+                    });
+                if (User.IsInRole("RemoveApplicationUser"))
+                {
+
+                    
+
+                }
+                i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.EditRemove16x16gray;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "RemoveDataApplicationUser";
+                        s.Text = "Xóa";
+
+                    });
+
+            });
+
+            toolbar.Items.Add(i =>
+            {
+                i.Image.IconID = DevExpress.Web.ASPxThemes.IconID.SetupPagesetup16x16;
+                i.ItemStyle.CssClass = "btn btn-outline-primary";
+                if (User.IsInRole("BlockApplicationUser"))
+                {
+
+                    i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.IconbuilderSecurityLockSvg16x16;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "BlockApplicationUser";
+                        s.Text = "Khóa";
+
+                    });
+                    i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.IconbuilderSecurityUnlockSvg16x16;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "UnblockApplicationUser";
+                        s.Text = "Mở Khóa";
+
+                    });
+                }
+
+                if (User.IsInRole("ImportApplicationUser"))
+                {
+
+                    i.Items.Add(s =>
+                    {
+                        s.Command = GridViewToolbarCommand.Custom;
+                        s.Image.IconID = DevExpress.Web.ASPxThemes.IconID.XafActionModeldifferencesImportSvg16x16;
+                        s.ItemStyle.CssClass = "btn btn-outline-primary";
+                        s.Name = "ImportDataApplicationUser";
+                        s.Text = "Import";
+
+                    });
+                }
+
+
+            });
+
+        });
+        settings.SettingsSearchPanel.Visible = true;
+        settings.SettingsText.SearchPanelEditorNullText = "Tìm kiếm...";
+
+        settings.ClientSideEvents.ToolbarItemClick = "OnToolbarItemClickApplicationUser";
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "#";
+            column.Width = 0;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.HeaderStyle.HorizontalAlign = HorizontalAlign.Center;
+            column.CellStyle.HorizontalAlign = HorizontalAlign.Center;
+            column.SetDataItemTemplateContent(tc =>
+            {
+                ViewContext.Writer.Write("<font>" + (tc.VisibleIndex + 1).ToString() + "</font>");
+            });
+            column.SetHeaderTemplateContent(tc =>
+            {
+                ViewContext.Writer.Write("#");
+            });
+            column.Settings.AllowDragDrop = DefaultBoolean.False;
+            column.Settings.AllowSort = DefaultBoolean.False;
+        });
+
+        settings.Columns.Add(column => { column.FieldName = "UserName"; column.Caption = "Tài khoản"; column.Width = 300; });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "EmployeeId";
+            column.Caption = "Thông tin"; column.Width = 500;
+            column.EditFormSettings.ColumnSpan = 2;
+            column.EditorProperties().ComboBox(p =>
+            {
+                p.TextField = "FullName";
+                p.ValueField = "ID";
+                p.DropDownStyle = DropDownStyle.DropDownList;
+                p.DropDownWidth = Unit.Pixel(500);
+                p.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                p.TextFormatString = "{0} - {1}";
+                p.Columns.Add("Code", "Mã định danh", Unit.Percentage(25));
+                p.Columns.Add("FullName", "Họ và tên", Unit.Percentage(50));
+                p.ValueType = typeof(int);
+                p.DataSource = ViewBag.Employee;
+            });
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "LevelId";
+            column.Caption = "Cấp độ quyền"; column.Width = 300;
+            column.EditFormSettings.ColumnSpan = 2;
+            column.EditorProperties().ComboBox(p =>
+            {
+                p.TextField = "Name";
+                p.ValueField = "ID";
+                p.DropDownStyle = DropDownStyle.DropDownList;
+                p.DropDownWidth = Unit.Pixel(500);
+                p.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                p.TextFormatString = "{0}";
+                p.Columns.Add("Name", "Tên Cấp Độ", Unit.Percentage(50));
+                p.Columns.Add("Value", "Giá Trị", Unit.Percentage(50));
+                p.ValueType = typeof(int);
+                p.DataSource = ViewBag.Level;
+            });
+
+        });
+
+        settings.Columns.Add(c =>
+        {
+            c.Width = 200;
+            c.FieldName = "LockoutEndDateUtc";
+            c.Caption = "Trạng thái";
+
+            c.SetDataItemTemplateContent(cell =>
+            {
+                if (cell.Text != "&nbsp;")
+                {
+                    DateTime timeStamp = (DateTime)DataBinder.Eval(cell.DataItem, "LockoutEndDateUtc");
+                    if (timeStamp > DateTime.Now.ToUniversalTime())
+                    {
+                        ViewContext.Writer.Write("<b style=\"font-style:italic\">" + "Khóa" + "</b>");
+                    }
+                    else
+                    {
+                        ViewContext.Writer.Write("<b style=\"font-style:italic\">" + "Hoạt Động" + "</b>");
+                    }
+                }
+                else
+                {
+                    ViewContext.Writer.Write("<b style=\"font-style:italic\">" + "Hoạt Động" + "</b>");
+                }
+
+            });
+        });
+
+// Chỉnh sửa Form Nhập liệu
+settings.CellEditorInitialize = (s, e) =>
+        {
+            MVCxGridView view = (MVCxGridView)s;
+            if (view.IsNewRowEditing) // Sự kiện Thêm dòng
+    {
+                string fields = "";
+                if (fields.Contains(e.Column.FieldName))
+                {
+                    e.Editor.ReadOnly = true;
+                }
+            }
+            else
+            {
+                string fields = "";
+                if (fields.Contains(e.Column.FieldName))
+                {
+                    e.Editor.ReadOnly = true;
+                }
+            }
+
+        };
+
+        //Sự kiện trước khi thêm dòng
+        settings.InitNewRow = (s, e) =>
+        {
+
+        };
+
+        if (ViewData["EditError"] != null)
+        {
+            settings.Styles.Footer.CssClass = "footerGrid";
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["EditError"]);
+            });
+        }
+
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            if (ViewData["EditError"] != null)
+            {
+                MVCxGridView gridView = (MVCxGridView)s;
+                gridView.Settings.ShowFooter = true;
+            }
+        };
+
+    });
+
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+
+@grid.Bind(Model).GetHtml()

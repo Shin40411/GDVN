@@ -1,0 +1,14 @@
+﻿@Html.DevExpress().ComboBox(c =>
+{
+   c.Name = "comboBoxGradeImport";
+   c.Properties.NullText = "Chọn lớp";
+   c.Properties.TextField = "Name";
+   c.Properties.ValueField = "ID";
+   c.Properties.ValueType = typeof(int);
+   c.Properties.DropDownStyle = DropDownStyle.DropDownList;
+   c.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+   c.Properties.TextFormatString = "{0} - {1}";
+   c.Properties.Columns.Add("Name", "Tên lớp", Unit.Pixel(200));
+   c.Properties.Columns.Add("Scholastic.Name", "Năm học", Unit.Pixel(200));
+   c.Width = Unit.Percentage(100);
+}).BindList(ViewBag.DataGrade).GetHtml()

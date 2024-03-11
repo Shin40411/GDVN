@@ -1,0 +1,29 @@
+﻿@Html.DevExpress().DropDownEdit(settings => {
+    settings.Name = "comboBoxApplicationRole";
+    settings.Width = Unit.Percentage(100);
+
+
+    settings.SetDropDownWindowTemplateContent(c => {
+        @Html.DevExpress().ListBox(gsettings => {
+            gsettings.Name = "listBoxApplicationRole";
+            gsettings.Style.Add("float", "left");
+            gsettings.Width = Unit.Percentage(100);
+            gsettings.Height = 350;
+            gsettings.Properties.EnableSelectAll = true;
+            gsettings.Properties.FilteringSettings.ShowSearchUI = true;
+            gsettings.Properties.EnableClientSideAPI = true;
+            gsettings.Properties.SelectionMode = ListEditSelectionMode.CheckColumn;
+            gsettings.Properties.ValueField = "Id";
+            gsettings.Properties.ValueType = typeof(string);
+            gsettings.Properties.Columns.Add("Name", "Tên Quyền").Width = Unit.Percentage(35);
+            gsettings.Properties.Columns.Add("Description", "Mô Tả").Width = Unit.Percentage(65);
+
+            gsettings.Properties.ClientSideEvents.SelectedIndexChanged = "ApplicationRoleSelectedIndexChanged";
+
+
+        }).BindList(Model).Render();
+    });
+    settings.Properties.AnimationType = AnimationType.None;
+    settings.Properties.ClientSideEvents.TextChanged = "ApplicationRoleTextChanged";
+
+}).GetHtml()

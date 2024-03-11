@@ -1,0 +1,70 @@
+﻿@model GD.Web.Models.ObjectReportViewModel
+@if (Model == null)
+{
+    <div class="col-lg-12">
+        <div class="alert-box primary-alert">
+            <div class="alert">
+                <h4 class="alert-heading">THÔNG BÁO</h4>
+                <p class="text-medium">
+                    Chưa chọn lớp học cần xem.
+                </p>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @Html.DevExpress().Chart(settings => {
+        settings.Name = "chartPieScoreHKI";
+        settings.BorderOptions.Visibility = DefaultBoolean.False;
+        settings.Height = 500;
+        settings.Width = 920;
+        settings.PaletteName = "Office";
+        settings.RenderFormat = DevExpress.XtraCharts.Web.RenderFormat.Svg;
+
+
+        settings.Legends.Default(l => {
+            l.AlignmentHorizontal = DevExpress.XtraCharts.LegendAlignmentHorizontal.Center;
+            l.AlignmentVertical = DevExpress.XtraCharts.LegendAlignmentVertical.BottomOutside;
+            l.Direction = DevExpress.XtraCharts.LegendDirection.LeftToRight;
+            l.MaxHorizontalPercentage = 50;
+            l.Border.Visibility = DefaultBoolean.False;
+        });
+
+        settings.Series.Add(s => {
+            settings.Name = "Name";
+            s.ArgumentDataMember = "Name";
+            s.ValueDataMembers[0] = "Number";
+            s.LabelsVisibility = DefaultBoolean.True;
+            s.Views().PieSeriesView(v => {
+                v.Titles.Add(t => {
+                    t.Text = "Tổng: {TV:#.##} học sinh";
+                    t.Dock = DevExpress.XtraCharts.ChartTitleDockStyle.Bottom;
+                });
+                v.SeriesLabel(l => {
+                    l.Position = DevExpress.XtraCharts.PieSeriesLabelPosition.Outside;
+                    l.TextPattern = "{A}: {V:G} ({VP:P2})";
+                    l.TextColor = System.Drawing.Color.Black;
+                    l.BackColor = System.Drawing.Color.Transparent;
+                    l.Font = new System.Drawing.Font("Tahoma", 8, System.Drawing.FontStyle.Bold);
+                    l.LineVisibility = DefaultBoolean.True;
+                    l.Border.Visibility = DefaultBoolean.False;
+                });
+            });
+        });
+
+
+
+        settings.Titles.Add(new DevExpress.XtraCharts.ChartTitle() {
+            Font = new System.Drawing.Font("Tahoma", 18),
+            Text = "Tỉ Lệ Điểm"
+        });
+        settings.Titles.Add(new DevExpress.XtraCharts.ChartTitle() {
+            Alignment = System.Drawing.StringAlignment.Far,
+            Dock = DevExpress.XtraCharts.ChartTitleDockStyle.Bottom,
+            Font = new System.Drawing.Font("Tahoma", 8),
+            TextColor = System.Drawing.Color.Gray,
+            Text= "Biểu Đồ Điểm HKI"
+        });
+    }).Bind(Model.Data).GetHtml()
+}

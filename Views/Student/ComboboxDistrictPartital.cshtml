@@ -1,0 +1,9 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxDistrict";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn quận huyện";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "DistrictSelectedIndexChanged";
+}).BindList(Model).GetHtml()

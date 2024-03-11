@@ -1,0 +1,32 @@
+﻿@model GD.Web.Models.QuestionViewModel
+
+@if (Model != null)
+{
+    <input type="text" id="EditQuestionID" value="@Html.Raw(Model.ID)" hidden />
+    <input type="text" id="OldManyEditQuestion" value="@Html.Raw(Model.ManyAnswer)" hidden />
+}
+else
+{
+    <input type="text" id="EditQuestionID" value="none" hidden />
+}
+
+@if(ViewBag.NumberChoiceAnswer != null)
+{
+    <input type="text" id="NumberAnswerChoiceEditQuestion" value="@Html.Raw(ViewBag.NumberChoiceAnswer)" hidden />
+}
+else
+{
+    <input type="text" id="NumberAnswerChoiceEditQuestion" value="0" hidden />
+}
+
+@Html.Label("Nội dung:", htmlAttributes: new { @class = "form-label" })
+@Html.TextAreaFor(model => model.Content, new { @class = "form-control" })
+
+<script>
+    var editorQuestionEditQuestion = CKEDITOR.replace('Content',
+        {
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '150',
+        }
+    );
+</script>

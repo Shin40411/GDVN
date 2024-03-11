@@ -1,0 +1,10 @@
+﻿@Html.DevExpress().ComboBox(settings =>
+{
+    settings.SelectedIndex = 0;
+    settings.Name = "comboBoxLevelAddQuestion";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn độ khó";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+}).BindList(Model).GetHtml()

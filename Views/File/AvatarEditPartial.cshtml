@@ -1,0 +1,23 @@
+﻿<div class="d-flex justify-content-center">
+    <div style="padding: 10px;">
+        <img id="avatarfileedit" src="@Url.Content("~/Content/Custom/Images/blank-image.png")" alt="Ảnh đại diện" height="250" />
+    </div>
+</div>
+<div class="d-flex justify-content-center">
+    <input id="preview-avatar-edit" name="preview-avatar-edit" type="file" onchange="previewEdit()" accept="image/png, image/gif, image/jpeg" />
+</div>
+
+<script>
+    function previewEdit() {
+        var arrayImage = [".png", ".jpg", ".jpeg", ".bmp", ".gif"];
+        let indexImage = arrayImage.indexOf(getExtention(event.target.files[0].name));
+        if (indexImage > -1) {
+            avatarfileedit.src = URL.createObjectURL(event.target.files[0]);
+        }
+        else {
+            avatarfileedit.src = "@Url.Content("~/Content/Custom/Images/blank-image.png")";
+            toastr.error("Vui lòng chọn hình ảnh");
+            $("#preview-avatar-edit").val(null);
+        }  
+    }
+</script>

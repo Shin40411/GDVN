@@ -1,0 +1,10 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxSubClassFilter";
+    settings.Width = Unit.Percentage(100);
+    settings.SelectedIndex = 0;
+    settings.Properties.NullText = "Chọn lớp";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "SubClassFilterSelectedIndexChanged";
+}).BindList(ViewBag.SubClassFilterData).GetHtml()

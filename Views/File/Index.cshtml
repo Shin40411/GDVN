@@ -1,0 +1,690 @@
+﻿@{
+    ViewBag.Title = "Tài liệu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/File.js?v=20220304")"></script>
+}
+
+<style>
+    .dxgvHeader_Office365 {
+        background-color: #1c53a3;
+        color: #fff;
+    }
+
+    .dxgv {
+        border-bottom: 1px solid #d1d1d1 !important;
+    }
+    
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <h2 style="color: #219653; font-weight:600;">Tài liệu</h2>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="#">Danh mục</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Tài liệu
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10"></h6>
+
+                    <div class="table-wrapper table-responsive">
+                        @using (Html.BeginForm())
+                        {
+                            Html.AntiForgeryToken();
+                            ViewContext.Writer.Write("<div id=\"contentFile\" style=\"display:block;\">");
+                            Html.RenderPartial("GridFilePartial");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlFilterFile";
+    settings.HeaderText = "Lọc Danh Sách";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.HorizontalAlign = PopupAdaptiveHorizontalAlign.WindowRight;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(300);
+    settings.SettingsAdaptivity.MinHeight = Unit.Pixel(600);
+    settings.SettingsAdaptivity.MaxHeight = Unit.Pixel(650);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutFilterFile";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitFilterFile";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickFilterFile";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutFilterFile";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "cbType";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Kích hoạt", 0);
+                            c.Properties.Items.Add("Chưa kích hoạt", 1);
+                            c.Properties.ClientSideEvents.ValueChanged = "TypeValueChanged";
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlImportFile";
+    settings.HeaderText = "THÊM TÀI LIỆU";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Percentage(100);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutImportFile";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitImportFile";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Tải lên";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickImportFile";
+                    }).Render();
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelImportFile";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onCancelClickImportFile";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutImportFile";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                g.Items.Add(i =>
+                {
+                    i.Caption = "";
+
+                    i.RowSpan = 8;
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentAvatar\" style=\"display:block;\">");
+                            Html.RenderPartial("AvatarPartial");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Tên tài liệu";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().TextBox(s =>
+                        {
+                            s.Name = "txtNameFile";
+                            s.Width = Unit.Percentage(100);
+                        }).GetHtml();
+                    });
+                });
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Tác giả";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().TextBox(s =>
+                        {
+                            s.Name = "txtAuthor";
+                            s.Width = Unit.Percentage(100);
+                        }).GetHtml();
+                    });
+                });
+
+
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "comboBoxCategory";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Thư viện", 0);
+                            c.Properties.Items.Add("Giáo án", 1);
+                            c.Properties.Items.Add("Mẫu giáo án", 2);
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Môn học";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentCourse\" style=\"display:block;\">");
+                            Html.RenderPartial("ComboboxCoursePartital");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Chủ đề";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentTopic\" style=\"display:block;\">");
+                            Html.RenderPartial("ComboboxTopicPartital");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Liên kết lưu trữ";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().Memo(c =>
+                        {
+                            c.Name = "mnLinkFile";
+                            c.Width = Unit.Percentage(100);
+
+
+                        }).GetHtml();
+
+                    });
+                });
+
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Ghi chú";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().Memo(c =>
+                        {
+                            c.Name = "mnDescriptionFile";
+                            c.Width = Unit.Percentage(100);
+
+
+                        }).GetHtml();
+
+                    });
+                });
+
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Chọn tập tin:";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentImportFile\" style=\"display:block;\">");
+                            Html.RenderPartial("UploadFilePartial");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlEditImportFile";
+    settings.HeaderText = "CHỈNH SỬA TÀI LIỆU";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Percentage(100);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutEditImportFile";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitEditImportFile";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Lưu";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickEditImportFile";
+                    }).Render();
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelEditImportFile";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Hủy";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onCancelClickEditImportFile";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutEditImportFile";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                g.Items.Add(i =>
+                {
+                    i.Caption = "";
+
+                    i.RowSpan = 7;
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentAvatarEdit\" style=\"display:block;\">");
+                            Html.RenderPartial("AvatarEditPartial");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Tên tài liệu";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().TextBox(s =>
+                        {
+                            s.Name = "txtNameEditFile";
+                            s.Width = Unit.Percentage(100);
+                        }).GetHtml();
+                    });
+                });
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Tác giả";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().TextBox(s =>
+                        {
+                            s.Name = "txtAuthorEdit";
+                            s.Width = Unit.Percentage(100);
+                        }).GetHtml();
+                    });
+                });
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "comboBoxCategoryEdit";
+                            c.ControlStyle.CssClass = "field";
+                            c.Properties.Items.Add("Thư viện", 0);
+                            c.Properties.Items.Add("Giáo án", 1);
+                            c.Properties.Items.Add("Mẫu giáo án", 2);
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Môn học";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentCourseEdit\" style=\"display:block;\">");
+                            Html.RenderPartial("ComboboxCourseEditPartital");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Chủ đề";
+                    i.SetNestedContent(() =>
+                    {
+                        using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentTopicEdit\" style=\"display:block;\">");
+                            Html.RenderPartial("ComboboxTopicEditPartital");
+                            ViewContext.Writer.Write("</div>");
+
+                        }
+
+                    });
+                });
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Liên kết";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().Memo(c =>
+                        {
+                            c.Name = "mnLinkFileEdit";
+                            c.Width = Unit.Percentage(100);
+
+
+                        }).GetHtml();
+
+                    });
+                });
+
+                g.Items.Add(i =>
+                {
+
+                    i.Caption = "Ghi chú";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().Memo(c =>
+                        {
+                            c.Name = "mnDescriptionFileEdit";
+                            c.Width = Unit.Percentage(100);
+
+
+                        }).GetHtml();
+
+                    });
+                });
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlNotication";
+    settings.HeaderText = "THÔNG BÁO";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(700);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutNotication";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelNotication";
+                        s.Width = Unit.Pixel(100);
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onCancelNoticationClick";
+                    }).Render();
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutNotication";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.SetNestedContent(() =>
+                    {
+                        ViewContext.Writer.Write("<div id=\"viewNotication\" style=\"display:block;\">");
+
+                        ViewContext.Writer.Write("</div>");
+
+                    });
+                });
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()

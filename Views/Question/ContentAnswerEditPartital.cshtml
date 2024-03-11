@@ -1,0 +1,36 @@
+﻿@model GD.Web.Models.AnswerViewModel
+
+@if (Model != null && ViewBag.IDQuestionEditAnswer != null && ViewBag.MutiQuestionEditAnswer != null)
+{
+    <input type="text" id="EditAnswerIDQuestion" value="@Html.Raw(ViewBag.IDQuestionEditAnswer)" hidden />
+    <input type="text" id="OldManyEditAnswer" value="@Html.Raw(ViewBag.MutiQuestionEditAnswer)" hidden />
+    <input type="text" id="IDAnswerEditAnswer" value="@Html.Raw(Model.ID)" hidden />
+    <input type="text" id="OldCorrectEditAnswer" value="@Html.Raw(Model.Correct)" hidden />
+    <input type="text" id="OldNumberAnswerEditAnswer" value="@Html.Raw(ViewBag.NumberAnswerEditAnswer)" hidden />
+}
+else
+{
+    <input type="text" id="idQuestionEditCheckAgain" value="none" hidden />
+    <input type="text" id="OldManyEditAnswer" value="none" hidden />
+    <input type="text" id="IDAnswerEditAnswer" value="none" hidden />
+}
+
+@if (ViewBag.NumberChoiceEditAnswer != null)
+{
+    <input type="text" id="NumberAnswerChoiceEditAnswer" value="@Html.Raw(ViewBag.NumberChoiceEditAnswer)" hidden />
+}
+else
+{
+    <input type="text" id="NumberAnswerChoiceEditAnswer" value="0" hidden />
+}
+
+@Html.TextAreaFor(model => model.ContentAnswerEdit, new { @class = "form-control" })
+
+<script>
+    var editorQuestionEditQuestion = CKEDITOR.replace('ContentAnswerEdit',
+        {
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '150',
+        }
+    );
+</script>

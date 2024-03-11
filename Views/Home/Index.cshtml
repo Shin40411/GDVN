@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "KHBD/Bài giảng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Head {
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Custom/Css/Library/glightbox.css?v=20220522")" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Lesson.js?v=20220522")"></script>
+}
+<style>
+    .icon-custom {
+        max-width: 46px;
+        width: 100%;
+        height: 46px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        margin-right: 20px;
+        background: rgba(74, 108, 247, 0.1);
+        color: #4a6cf7;
+        font-weight: 700;
+    }
+
+        .icon-custom.success {
+            background: rgba(74, 108, 247, 0.1);
+            color: #4a6cf7;
+        }
+
+    .modal-dialog {
+        min-width: 95%;
+    }
+
+    iframe {
+        border: none; /* Reset default border */
+        height: 90vh; /* Viewport-relative units */
+        width: 90vw;
+    }
+</style>
+<div class="container-fluid" >
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title d-flex align-items-center flex-wrap mb-30">
+                    <h2 class="mr-40" style="color: #219653; font-weight:600;">Chọn bộ sách giáo khoa</h2>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- Project Wrapper Start -->
+    <div class="projects-wrapper">
+        <div class="row row-cols-1 row-cols-md-4 g-4 d-flex justify-content-center text-center" id="content-lesson">
+            @Html.Partial("ContentBookPartital")
+        </div>
+        <!-- End Row -->
+    </div>
+</div>
+<script src="@Url.Content("~/Content/Custom/Scripts/Library/glightbox.js?v=20220522")"></script>
+<script>
+    document.getElementById("filter-course").style.display = 'block';
+   
+</script>

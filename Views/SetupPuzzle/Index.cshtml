@@ -1,0 +1,128 @@
+﻿@{
+    ViewBag.Title = "Cài đặt trò chơi ô chữ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Puzzle.js")"></script>
+}
+
+<style>
+    .uppercase input {
+        text-transform: uppercase;
+    }
+
+    .dxflRequired_Office365 {
+        color: #ff0000;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Cài đặt</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="/PuzzleSession/Index">Phiên trò chơi ô chữ</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                @ViewBag.SessionName
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Cài đặt
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="mb-10">Cài đặt</h6>
+
+                    <div class="table-wrapper table-responsive">
+                        <input type="hidden" id="valueTypeBook" value="@ViewBag.SessionID" />
+                        @using (Html.BeginForm())
+                        {
+                            ViewContext.Writer.Write("<div id=\"contentPuzzle\" style=\"display:block;\">");
+                            Html.RenderPartial("GridPuzzlePartital");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+<script>
+    function LoadGridData() {
+        Loading.Show();
+        const searchParams = new URLSearchParams(window.location.search);
+        $.ajax({
+            url: "/SetUpPuzzle/GridPuzzleSessionPartital",
+            data: {
+                ssID: searchParams.get('ssID') == null ? 0 : searchParams.get('ssID')
+            },
+            type: 'GET',
+            success: function (data) {
+
+                if (data == "") {
+
+                }
+                else {
+                    $("#contentPuzzle").html(data);
+                }
+
+                Loading.Hide();
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+                Loading.Hide();
+            }
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        var sessionId = getCookieValue("SessionId");
+        if (sessionId == '' || sessionId == null) {
+            window.location.reload();
+        }
+    });
+
+    function getCookieValue(name) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return '';
+    }
+
+</script>

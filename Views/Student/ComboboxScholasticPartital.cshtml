@@ -1,0 +1,10 @@
+﻿ @Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "comboBoxScholasticStudent";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn năm học";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "ClassFilterSelectedIndexChanged";
+}).BindList(ViewBag.ScholasticFilter).Bind(ViewBag.ScholasticFilterID).GetHtml()

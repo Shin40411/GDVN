@@ -1,0 +1,105 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+        Đăng Nhập
+    </title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+    <link rel="icon" href="@Url.Content("~/Content/Custom/Images/gdlogo.ico")" type="image/x-icon" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/jquery.min.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/themes/css/main.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Custom/Css/Library/toastr.min.css")" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/toastr.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/System/Login.js?v=20220116")"></script>
+    <style>
+        
+    </style>
+</head>
+<body style="background-color: #ffffff;">
+    <div>
+
+        <div class="row g-0 auth-row">
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="auth-cover-wrapper">
+                    <div class="auth-cover">
+                        <div class="title text-center">
+                            <h1 class="text-primary mb-10" style="font-size: 36px; font-weight: 900; font-family: UTMAvoBoldFont;">GD VIỆT NAM</h1>
+                            <img src="@Url.Content("~/Content/themes/images/auth/project.png")" alt="" />
+                        </div>
+                        <div class="cover-image">
+                            <img src="@Url.Content("~/Content/themes/images/auth/login3D.png")" alt="" />
+                        </div>
+                        <div class="shape-image">
+                            <img src="@Url.Content("~/Content/themes/images/auth/shape.svg")" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-lg-6">
+                <div class="signin-wrapper">
+                    <div class="form-wrapper">
+                        <img src="@Url.Content("~/Content/Custom/Images/headerlogin.png")" alt="" />
+                        <p class="text-sm mb-25">
+                            Vui lòng đăng nhập để vào hệ thống
+                        </p>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label>Tài khoản</label>
+                                    <input type="text" id="username" placeholder="Tài khoản" />
+                                </div>
+                            </div>
+                            <!-- end col -->
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label>Mật khẩu</label>
+                                    <input type="password" id="password" placeholder="Mật khẩu" />
+                                </div>
+                            </div>
+
+                            <!-- end col -->
+                            <div class="col-12">
+                                <div class="button-group d-flex justify-content-center flex-wrap">
+                                    <button id="login-button" class="main-btn primary-btn btn-hover w-100 text-center" onclick="onLogin()">
+                                        Đăng nhập
+                                    </button>
+                                    <div class="text-center" id="login-loading" style="display:none;">
+                                        <div class="spinner-border text-primary" style="margin-top:10px;" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="singin-option pt-40" id="login-error" style="display:none;">
+                            <p class="text-sm text-medium text-center text-danger" id="login-error-message">
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <script src="@Url.Content("~/Content/themes/js/bootstrap.bundle.min.js")"></script>
+    <script>
+        $(document).keydown(function (e) {
+            if (e.which == 13) {
+                onLogin();
+            }
+        });
+    </script>
+
+</body>
+</html>

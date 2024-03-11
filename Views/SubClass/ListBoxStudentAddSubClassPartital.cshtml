@@ -1,0 +1,16 @@
+﻿@Html.DevExpress().ListBox(settings => {
+    settings.Name = "listBoxStudentAddSubClass";
+    settings.Width = Unit.Percentage(100);
+    settings.Height = 350;
+    settings.Style.Add("float", "left");
+    settings.Properties.EnableSelectAll = true;
+    settings.Properties.FilteringSettings.ShowSearchUI = true;
+    settings.Properties.EnableClientSideAPI = true;
+    settings.Properties.SelectionMode = ListEditSelectionMode.CheckColumn;
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+    settings.Properties.Columns.Add("Code", "Mã").Width = Unit.Percentage(25);
+    settings.Properties.Columns.Add("FullName", "Họ tên").Width = Unit.Percentage(50);
+    settings.Properties.Columns.Add("PhoneNumber", "Số điện thoại").Width = Unit.Percentage(25);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "StudentAddSubClassSelectedIndexChanged";
+}).BindList(ViewBag.StudentData).GetHtml()

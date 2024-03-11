@@ -1,0 +1,8 @@
+﻿@Html.DevExpress().ComboBox(settings => {
+    settings.Name = "comboBoxTopicEditQuestion";
+    settings.Width = Unit.Percentage(100);
+    settings.Properties.NullText = "Chọn chủ đề";
+    settings.Properties.TextField = "Name";
+    settings.Properties.ValueField = "ID";
+    settings.Properties.ValueType = typeof(int);
+}).BindList(Model).GetHtml()

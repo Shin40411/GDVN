@@ -1,0 +1,28 @@
+﻿@Html.DevExpress().DropDownEdit(settings => {
+    settings.Name = "comboBoxApplicationGroup";
+    settings.Width = Unit.Percentage(100);
+
+
+    settings.SetDropDownWindowTemplateContent(c => {
+        @Html.DevExpress().ListBox(gsettings => {
+            gsettings.Name = "listBoxApplicationGroup";
+            gsettings.Style.Add("float", "left");
+            gsettings.Width = Unit.Percentage(100);
+            gsettings.Height = 350;
+            gsettings.Properties.EnableSelectAll = true;
+            gsettings.Properties.FilteringSettings.ShowSearchUI = true;
+            gsettings.Properties.EnableClientSideAPI = true;
+            gsettings.Properties.SelectionMode = ListEditSelectionMode.CheckColumn;
+            gsettings.Properties.TextField = "Name";
+            gsettings.Properties.ValueField = "ID";
+            gsettings.Properties.ValueType = typeof(int);
+
+            gsettings.Properties.ClientSideEvents.SelectedIndexChanged = "ApplicationGroupSelectedIndexChanged";
+
+
+        }).BindList(Model).Render();
+    });
+    settings.Properties.AnimationType = AnimationType.None;
+    settings.Properties.ClientSideEvents.TextChanged = "ApplicationGroupTextChanged";
+
+}).GetHtml()

@@ -1,0 +1,242 @@
+﻿@{
+    ViewBag.Title = "Phiên trò chơi ô chữ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Puzzle.js")"></script>
+}
+<style>
+    .icon-custom {
+        max-width: 46px;
+        width: 100%;
+        height: 46px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        margin-right: 20px;
+        background: rgba(74, 108, 247, 0.1);
+        color: #4a6cf7;
+        font-weight: 700;
+    }
+
+        .icon-custom.success {
+            background: rgba(74, 108, 247, 0.1);
+            color: #4a6cf7;
+        }
+
+    .modal-dialog {
+        min-width: 95%;
+    }
+
+    iframe {
+        border: none; /* Reset default border */
+        height: 90vh; /* Viewport-relative units */
+        width: 90vw;
+    }
+
+    .importButton {
+        border-radius: 10px;
+        margin-right: 5px;
+    }
+</style>
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="btn btn-primary mt-3 mb-3" onclick="onOpenImportFile()">
+                    <i class="lni lni-plus mr-5"></i> Thêm phiên trò chơi
+                </div>
+                <button class="btn btn-danger mt-3 mb-3" id="btnRemove" disabled onclick="DeleteSessions()">
+                    <i class="lni lni-trash-can"></i> Xoá phiên trò chơi
+                </button>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- Project Wrapper Start -->
+    <div class="projects-wrapper">
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="content-library">
+            @Html.Action("SessionPartital", "PuzzleSession")
+        </div>
+        <!-- End Row -->
+    </div>
+</div>
+
+<script>
+    function onOpenImportFile(s, e) {
+        var inputElement = document.getElementById('txtNameFile_I');
+        inputElement.value = '';
+        PopupControlImportFile.Show();
+    }
+
+    function onOpenNavigateControl(sessionId) {
+        window.sessionId = sessionId;
+        PopupControlNavigation.Show();
+    }
+</script>
+
+<script src="@Url.Content("~/Content/Custom/Scripts/Library/glightbox.js?v=20220522")"></script>
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlImportFile";
+    settings.HeaderText = "THÊM PHIÊN TRÒ CHƠI";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Percentage(30);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutImportFile";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitImportFile";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Lưu";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickImportFile";
+                    }).Render();
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutImportFile";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                g.Items.Add(i =>
+                {
+                    i.Caption = "Tên phiên trò chơi";
+                    i.Width = Unit.Percentage(100);
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().TextBox(s =>
+                        {
+                            s.Name = "txtNameFile";
+                            s.Width = Unit.Percentage(100);
+                            s.AutoCompleteType = AutoCompleteType.Disabled;
+                        }).GetHtml();
+                    });
+                });
+            });
+        }).Render();
+    });
+}).GetHtml()
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlNavigation";
+    settings.HeaderText = "Điều hướng";
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = false;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutTutorialLibrary";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnCancelNav";
+                        s.ControlStyle.CssClass = "cancelButton";
+                        s.Width = Unit.Pixel(50);
+                        s.Text = "Đóng";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onCancelClickNav";
+                    }).Render();
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutTutorialLibrary";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.SetNestedContent(() =>
+                    {
+                        Html.RenderPartial("NavigatePuzzle");
+                    });
+                });
+            });
+        }).Render();
+    });
+}).GetHtml()

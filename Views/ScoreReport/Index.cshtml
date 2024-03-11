@@ -1,0 +1,138 @@
+﻿@{
+    ViewBag.Title = "Thống kê điểm thi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/ScoreReport.js?v=20220327")"></script>
+}
+
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .dxgvHeader_Office365 {
+            background-color: #1c53a3;
+            color: #fff;
+        }
+
+        .dxgv {
+            border-bottom: 1px solid #d1d1d1 !important;
+        }
+    </style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Thống kê</h2>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol style="display: flex; flex-wrap: nowrap; padding: 0 0; margin-bottom: 1rem; list-style: none;">
+                            <li>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentScholasticScoreReportFilter\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxScholasticScoreReportPartial"); 
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </li>
+                            <li style="margin-left: 10px;">
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentGradeScoreReportFilter\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxGradeScoreReportPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <div class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  ">
+                        <div class="left">
+                            
+                        </div>
+                        <div class="right">
+                            
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper table-responsive">
+                        @using (Html.BeginForm())
+                        {
+                            Html.DevExpress().PageControl(
+                                 panel =>
+                                 {
+                                     panel.Name = "panelScoreReport";
+                                     panel.TabAlign = TabAlign.Left;
+                                     panel.TabPosition = TabPosition.Top;
+                                     panel.Width = Unit.Percentage(100);
+                                     panel.ClientSideEvents.ActiveTabChanged = "ScoreReportActiveTabChanged";
+                                     panel.TabPages.Add("HKI").SetContent(() =>
+                                     {
+                                         ViewContext.Writer.Write("<div id=\"contentScoreHKIReport\" style=\"display:block;\">");
+                                         Html.RenderPartial("PieScoreHKIPartital");
+                                         ViewContext.Writer.Write("</div>");
+                                     });
+                                     panel.TabPages.Add("HKII").SetContent(() =>
+                                     {
+                                         ViewContext.Writer.Write("<div id=\"contentScoreHKIIReport\" style=\"display:block;\">");
+                                         Html.RenderPartial("PieScoreHKIIPartital");
+                                         ViewContext.Writer.Write("</div>");
+                                     });
+                                     panel.TabPages.Add("CẢ NĂM").SetContent(() =>
+                                     {
+                                         ViewContext.Writer.Write("<div id=\"contentScoreCNReport\" style=\"display:block;\">");
+                                         Html.RenderPartial("PieScoreCNPartital");
+                                         ViewContext.Writer.Write("</div>");
+                                     });
+                                 }).GetHtml();
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+<script>
+    document.getElementById("filter-scholastic").style.display = 'block';
+</script>

@@ -1,0 +1,948 @@
+﻿@{
+    ViewBag.Title = "Trộn đề";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <link rel="stylesheet" href="@Url.Content("~/Content/Custom/Css/Category/a4.css")" />
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Library/ckeditor/ckeditor.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/Custom/Scripts/Category/Exam.js?v=20220313")"></script>
+
+}
+
+<style>
+    .footerGrid {
+        background-color: #FFC8C8;
+        color: #FF0000;
+    }
+
+    .modal-dialog {
+        min-width: 99%;
+    }
+
+    .dxgvHeader_Office365 {
+        background-color: #1c53a3;
+        color: #fff;
+    }
+
+    .dxgv {
+        border-bottom: 1px solid #d1d1d1 !important;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- ========== title-wrapper start ========== -->
+    <div class="title-wrapper pt-30">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="title mb-30">
+                    <div class="title d-flex align-items-center flex-wrap mb-30">
+                        <h2 class="mr-40" style="color: #219653; font-weight:600;">Trộn đề</h2>
+                        <a href="#" onclick="CreateExam()" class="main-btn primary-btn btn-hover btn-sm">
+                            <i class="lni lni-plus mr-5"></i> Thêm bộ đề
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- end col -->
+            <div class="col-md-6">
+                <div class="breadcrumb-wrapper mb-30">
+                    <nav aria-label="breadcrumb">
+                        <ol style="display: flex; flex-wrap: wrap; padding: 0 0; margin-bottom: 1rem; list-style: none;">
+                            <li>
+                                @*@using (Html.BeginForm())
+                                    {
+                                        ViewContext.Writer.Write("<div id=\"contentTopicExamFilter\" style=\"display:block;\">");
+                                        Html.RenderPartial("ComboboxTopicPartital");
+                                        ViewContext.Writer.Write("</div>");
+                                    }*@
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== title-wrapper end ========== -->
+    <!-- ========== tables-wrapper start ========== -->
+    <div class="tables-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <h6 class="text-medium mb-2 fw-600">Danh sách trộn đề</h6>
+                    <div class="
+                    title
+                    d-flex
+                    flex-wrap
+                    align-items-center
+                    justify-content-between
+                  ">
+                        <div class="left">
+                            <div class="d-flex justify-content-between">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="filter-type-exam" onchange="onChangeFilterType()">
+                                    <label class="form-check-label text-medium mb-2" for="filter-type-exam">Cá nhân</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="right">
+                            <div class="d-flex justify-content-between align-items-center">
+                                @Html.DevExpress().TextBox(s =>
+                                {
+                                s.Name = "txtExamSearch";
+                                s.Width = Unit.Percentage(100);
+                                s.Properties.NullText = "Tìm kiếm...";
+                                s.Properties.ClientSideEvents.TextChanged = "ExamSearchTextChanged";
+                            }).GetHtml()
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper table-responsive">
+                        @using (Html.BeginForm())
+                        {
+                            Html.AntiForgeryToken();
+                            ViewContext.Writer.Write("<div id=\"contentExam\" style=\"display:block;\">");
+                            Html.RenderPartial("GridExamPartial");
+                            ViewContext.Writer.Write("</div>");
+                        }
+                    </div>
+
+                </div>
+                <!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- ========== tables-wrapper end ========== -->
+</div>
+
+<!-- ========== Add Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="add-exam" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Thêm bộ đề</h5>
+
+                    <button class="border-0 bg-transparent h1" data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <input type="text" id="IdExamAdd" hidden />
+                                <label class="form-label">Môn học:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                               settings.Name = "comboBoxCourseAddExam";
+                               settings.Width = Unit.Percentage(100);
+                               settings.Properties.NullText = "Chọn môn học";
+                               settings.SelectedIndex = 0;
+                               settings.Properties.TextField = "Name";
+                               settings.Properties.ValueField = "ID";
+                               settings.Properties.ValueType = typeof(int);
+                               settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseAddExamSelectedIndexChanged";
+                           }).BindList(ViewBag.CourseData).GetHtml()
+                            </div>
+                            @*<div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+            <label class="form-label">Chủ đề:</label>
+            @using (Html.BeginForm())
+            {
+                ViewContext.Writer.Write("<div id=\"contentTopicAddExam\" style=\"display:block;\">");
+                Html.RenderPartial("ComboboxTopicAddExamPartital");
+                ViewContext.Writer.Write("</div>");
+            }
+        </div>*@
+
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <label class="form-label">Tên bộ đề:</label>
+                                @Html.DevExpress().TextBox(settings =>
+                              {
+                                  settings.Name = "textBoxName";
+                                  settings.Width = Unit.Percentage(100);
+
+                              }).GetHtml()
+                            </div>
+                            <div class="col-md-3 col-lg-3 col-xl-3 mb-20">
+                                <label class="form-label">Thời gian làm bài(phút):</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditNumberTime";
+                               settings.Properties.MinValue = 5;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-sm-3 mb-20">
+                                <label class="form-label">Số đề con:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditNumberTest";
+                               settings.Properties.MinValue = 1;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-sm-3 mb-20">
+                                <label class="form-label">Tổng điểm trắc nghiệm:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                           {
+                               settings.Name = "spinEditPointChoiceTest";
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 10;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-sm-3 mb-20">
+                                <label class="form-label">Tổng điểm tự luận:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditPointEssayTest";
+                               settings.Properties.MinValue = 0;
+                               settings.Properties.MaxValue = 10;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                        <h6 class="mb-20">Cơ cấu câu hỏi trắc nghiệm</h6>
+                                        <div>
+                                            <a href="#" onclick="CreateExamQuestion()" class="main-btn primary-btn btn-hover btn-sm">
+                                                <i class="lni lni-plus mr-5"></i> Thêm câu hỏi trắc nghiệm
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+
+                                            @Html.Partial("GridExamLevelPartial")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                                title
+                                                d-flex
+                                                align-items-center
+                                                justify-content-between
+                                                flex-wrap
+                                                ">
+                                        <h6 class="mb-20">Cơ cấu câu hỏi tự luận</h6>
+                                        <div>
+                                            <a href="#" onclick="CreateExamEssayQuestion()" class="main-btn primary-btn btn-hover btn-sm">
+                                                <i class="lni lni-plus mr-5"></i> Thêm câu hỏi tự luận
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+
+                                            @Html.Partial("GridExamEssayLevelPartial")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                        <h6 class="mb-20">Chế độ hiển thị</h6>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+
+                                            @Html.DevExpress().CheckBoxList(settings =>
+                                            {
+                                           settings.Name = "checkBoxListViewAddExam";
+                                           settings.ControlStyle.Border.BorderStyle = BorderStyle.None;
+                                           settings.Properties.RepeatLayout = RepeatLayout.Table;
+                                           settings.Properties.RepeatDirection = RepeatDirection.Horizontal;
+                                           settings.Properties.RepeatColumns = 3;
+                                           settings.Properties.Items.Add("Hiển thị theo loại(tự luận/trắc nghiệm)", 1).Selected = true;
+                                           settings.Properties.Items.Add("Hiển thị theo độ khó", 2);
+                                       }).GetHtml()
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+
+                        <button onclick="CreateExamSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Edit Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="edit-exam" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Sửa bộ đề</h5>
+
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <input type="text" id="IdExamAdd" hidden />
+                                <label class="form-label">Môn học:</label>
+                                @Html.DevExpress().ComboBox(settings =>
+                                {
+                                   settings.Name = "comboBoxCourseEditExam";
+                                   settings.Width = Unit.Percentage(100);
+                                   settings.Properties.NullText = "Chọn môn học";
+                                   settings.Properties.TextField = "Name";
+                                   settings.Properties.ValueField = "ID";
+                                   settings.Properties.ValueType = typeof(int);
+                                   settings.Properties.ClientSideEvents.SelectedIndexChanged = "CourseEditExamSelectedIndexChanged";
+                               }).BindList(ViewBag.CourseData).GetHtml()
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <label class="form-label">Chủ đề:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentTopicEditExam\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxTopicEditExamPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-sm-6 mb-20">
+                                <label class="form-label">Tên bộ đề:</label>
+                                @Html.DevExpress().TextBox(settings =>
+                              {
+                                  settings.Name = "textBoxNameEdit";
+                                  settings.Width = Unit.Percentage(100);
+
+                              }).GetHtml()
+                            </div>
+                            <div class="col-md-3 col-lg-3 col-xl-3 mb-20">
+                                <label class="form-label">Thời gian làm bài(phút):</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditNumberTimeEdit";
+                               settings.Properties.MinValue = 5;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-3 col-lg-3 col-sm-3 mb-20">
+                                <label class="form-label">Số đề con:</label>
+                                @Html.DevExpress().SpinEdit(settings =>
+                                {
+                               settings.Name = "spinEditNumberTestEdit";
+                               settings.Properties.MinValue = 1;
+                               settings.Properties.MaxValue = 999;
+                               settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                               settings.Width = Unit.Percentage(100);
+                           }).GetHtml()
+                            </div>
+                            <div class="col-xl-12 col-lg-12" id="header-library-question-edit" style="display: none;">
+                                <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                    <h6 class="mb-20">Ngân hàng câu hỏi</h6>
+                                    @Html.DevExpress().RadioButtonList(settings =>
+                                    {
+                                   settings.Name = "radioButtonListSourceEditExam";
+                                   settings.ControlStyle.Border.BorderStyle = BorderStyle.None;
+                                   settings.Properties.RepeatLayout = RepeatLayout.Table;
+                                   settings.Properties.RepeatDirection = RepeatDirection.Horizontal;
+                                   settings.Properties.RepeatColumns = 2;
+                                   settings.Properties.Items.Add("Tất cả", 0).Selected = true;
+                                   settings.Properties.Items.Add("Cá nhân", 1);
+                                   settings.Properties.ClientSideEvents.ValueChanged = "ListSourceEditExamValueChanged";
+                               }).GetHtml()
+                                </div>
+                               
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                        <h6 class="mb-20">Cơ cấu câu hỏi</h6>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+
+                                            @Html.Partial("GridExamLevelEditPartial")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20">
+                                <div class="card-style mb-30">
+                                    <div class="
+                                    title
+                                    d-flex
+                                    align-items-center
+                                    justify-content-between
+                                    flex-wrap
+                                    ">
+                                        <h6 class="mb-20">Chế độ hiển thị</h6>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+
+                                            @Html.DevExpress().CheckBoxList(settings =>
+                                            {
+                                           settings.Name = "checkBoxListViewEditExam";
+                                           settings.ControlStyle.Border.BorderStyle = BorderStyle.None;
+                                           settings.Properties.RepeatLayout = RepeatLayout.Table;
+                                           settings.Properties.RepeatDirection = RepeatDirection.Horizontal;
+                                           settings.Properties.RepeatColumns = 3;
+                                           settings.Properties.Items.Add("Hiển thị theo loại(tự luận/trắc nghiệm)", 1).Selected = true;
+                                           settings.Properties.Items.Add("Hiển thị theo độ khó", 2);
+                                       }).GetHtml()
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+                        <button onclick="EditExamSubmit()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== View Test ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="view-test" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Danh sách đề thi</h5>
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row" id="content-detail-viewtest">
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Xong
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== View Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="view-question-test" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Xem câu hỏi</h5>
+                    <button class="border-0 bg-transparent h1"
+                            data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="content-print A4 landscape">
+                            <div class="sheet row" style="padding: 10mm;" id="content-detail-viewquestion">
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Xong
+                        </button>
+                        <button onclick="GetNumberPage()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            In
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========== Add Exam Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="add-exam-question" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" style="min-width: 70%;">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Thêm câu hỏi trắc nghiệm</h5>
+
+                    <button class="border-0 bg-transparent h1" data-bs-dismiss="modal">
+                        <i class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20">
+                                <label class="form-label">Chủ đề:</label>
+                                @using (Html.BeginForm())
+                                {
+                                    ViewContext.Writer.Write("<div id=\"contentTopicAddExam\" style=\"display:block;\">");
+                                    Html.RenderPartial("ComboboxTopicAddExamPartital");
+                                    ViewContext.Writer.Write("</div>");
+                                }
+                            </div>
+
+                            <div class="col-xl-12 col-lg-12" id="header-library-question" style="display: none;">
+                                <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                                    <h6 class="mb-20">Nhập số câu hỏi</h6>
+                                    @Html.DevExpress().RadioButtonList(settings =>
+                                    {
+                                   settings.Name = "radioButtonListSourceAddExam";
+                                   settings.ControlStyle.Border.BorderStyle = BorderStyle.None;
+                                   settings.Properties.RepeatLayout = RepeatLayout.Table;
+                                   settings.Properties.RepeatDirection = RepeatDirection.Horizontal;
+                                   settings.Properties.RepeatColumns = 2;
+                                   settings.Properties.Items.Add("Tất cả", 0).Selected = true;
+                                   settings.Properties.Items.Add("Cá nhân", 1);
+                                   settings.Properties.ClientSideEvents.ValueChanged = "ListSourceAddExamValueChanged";
+                               }).GetHtml()
+                                </div>
+                                <div id="content-library-question">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+
+                        <button onclick="AddExamQuestion()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========== Add Exam Essay Question ========== -->
+<div class="warning-modal">
+    <div class="modal fade" id="add-exam-essay-quesstion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" style="min-width: 70%;">
+            <div class="modal-content card-style">
+                <div class="modal-header px-0 border-0">
+                    <h5 class="text-bold">Thêm câu hỏi tự luận</h5>
+                    <button class="border-0 bg-transparent h1" data-bs-dismiss="modal">
+                        <i style="color: red;" class="lni lni-cross-circle"></i>
+                    </button>
+                </div>
+                <div class="modal-body px-0">
+                    <div class="content mb-30">
+                        <div class="row">
+                            <div class="title d-flex align-items-center justify-content-between flex-wrap">
+                                <a href="#"
+                                   class="btn-sm primary-btn btn-hover mb-20" onclick="AddQuestionExam()">
+                                    <i class="lni lni-plus mr-10"></i>
+                                    Thêm câu hỏi
+                                </a>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-questionone-addexam">
+                                <div class="card-style-6" style="border: 1px solid #4a6cf7;">
+                                    <div class="card-meta mb-25">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                            <h5 class="text-bold mr-10">
+                                                Nhập câu 1:
+                                            </h5>
+                                            <button class="border-0 bg-transparent h1" onclick="CloseQuestionOneAddExam()">
+                                                <i style="color: red;" class="lni lni-cross-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" id="ContentAddExamEssayQuestionOne" style="height: 100px"></textarea>
+                                    <div>
+                                        <label class="form-label text-bold">Nhập điểm câu 1:</label>
+                                        @Html.DevExpress().SpinEdit(settings =>
+                                       {
+                                           settings.Name = "textBoxPointOne";
+                                           settings.Properties.MinValue = 0;
+                                           settings.Properties.MaxValue = 10;
+                                           settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                                           settings.Width = Unit.Percentage(100);
+
+                                       }).GetHtml()
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-questiontwo-addexam">
+                                <div class="card-style-6" style="border: 1px solid #00c1f8;">
+                                    <div class="card-meta mb-25">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                            <h5 class="text-bold mr-10">
+                                                Nhập câu 2:
+                                            </h5>
+                                            <button class="border-0 bg-transparent h1" onclick="CloseQuestionTwoAddExam()">
+                                                <i style="color: red;" class="lni lni-cross-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" id="ContentAddExamEssayQuestionTwo" style="height: 100px"></textarea>
+                                    <div>
+                                        <label class="form-label text-bold">Nhập điểm câu 2:</label>
+                                        @Html.DevExpress().SpinEdit(settings =>
+                                       {
+                                           settings.Name = "textBoxPointTwo";
+                                          settings.Properties.MinValue = 0;
+                                           settings.Properties.MaxValue = 10;
+                                           settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                                           settings.Width = Unit.Percentage(100);
+
+                                       }).GetHtml()
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-questionthree-addexam">
+                                <div class="card-style-6" style="border: 1px solid #f2994a;">
+                                    <div class="card-meta mb-25">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                            <h5 class="text-bold mr-10">
+                                                Nhập câu 3:
+                                            </h5>
+                                            <button class="border-0 bg-transparent h1" onclick="CloseQuestionThreeAddExam()">
+                                                <i style="color: red;" class="lni lni-cross-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" id="ContentAddExamEssayQuestionThree" style="height: 100px"></textarea>
+                                    <div>
+                                        <label class="form-label text-bold">Nhập điểm câu 3:</label>
+                                        @Html.DevExpress().SpinEdit(settings =>
+                                       {
+                                           settings.Name = "textBoxPointThree";
+                                           settings.Properties.MinValue = 0;
+                                           settings.Properties.MaxValue = 10;
+                                           settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                                           settings.Width = Unit.Percentage(100);
+
+                                       }).GetHtml()
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-questionfour-addexam">
+                                <div class="card-style-6" style="border: 1px solid #f7c800;">
+                                    <div class="card-meta mb-25">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                            <h5 class="text-bold mr-10">
+                                                Nhập câu 4:
+                                            </h5>
+                                            <button class="border-0 bg-transparent h1" onclick="CloseQuestionFourAddExam()">
+                                                <i style="color: red;" class="lni lni-cross-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" id="ContentAddExamEssayQuestionFour" style="height: 100px"></textarea>
+                                    <div>
+                                        <label class="form-label text-bold">Nhập điểm câu 4:</label>
+                                        @Html.DevExpress().SpinEdit(settings =>
+                                       {
+                                           settings.Name = "textBoxPointFour";
+                                           settings.Properties.MinValue = 0;
+                                           settings.Properties.MaxValue = 10;
+                                           settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                                           settings.Width = Unit.Percentage(100);
+
+                                       }).GetHtml()
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-sm-12 mb-20" id="content-questionfive-addexam">
+                                <div class="card-style-6" style="border: 1px solid #97ca31;">
+                                    <div class="card-meta mb-25">
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap mb-10">
+                                            <h5 class="text-bold mr-10">
+                                                Nhập câu 5:
+                                            </h5>
+                                            <button class="border-0 bg-transparent h1" onclick="CloseQuestionFiveAddExam()">
+                                                <i style="color: red;" class="lni lni-cross-circle"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <textarea class="form-control" id="ContentAddExamEssayQuestionFive" style="height: 100px"></textarea>
+                                    <div>
+                                        <label class="form-label text-bold">Nhập điểm câu 5:</label>
+                                        @Html.DevExpress().SpinEdit(settings =>
+                                       {
+                                           settings.Name = "textBoxPointFive";
+                                           settings.Properties.MinValue = 0;
+                                           settings.Properties.MaxValue = 10;
+                                           settings.Properties.SpinButtons.ShowIncrementButtons = false;
+                                           settings.Width = Unit.Percentage(100);
+
+                                       }).GetHtml()
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action d-flex flex-wrap justify-content-end">
+                        <button data-bs-dismiss="modal"
+                                class="main-btn danger-btn-outline btn-hover m-1">
+                            Hủy
+                        </button>
+
+                        <button onclick="AddExamEssayQuestion()"
+                                class="main-btn primary-btn btn-hover m-1">
+                            Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("filter-course").style.display = 'block';
+
+    $('#add-exam').on('hidden.bs.modal', function (e) {
+        if (finishAddExam == false && document.getElementById("IdExamAdd").value != null && document.getElementById("IdExamAdd").value.toString().length > 0) {
+            DeleteExamDataDefault();
+        }
+    })
+    $('#add-exam').on('shown.bs.modal', function (e) {
+        gvExamLevel.PerformCallback({
+            id: document.getElementById("IdExamAdd").value == null ? 0 : Number(document.getElementById("IdExamAdd").value),
+            course: comboBoxCourseAddExam.GetValue() == null ? 0 : comboBoxCourseAddExam.GetValue(),
+            /*topic: comboBoxTopicAddExam.GetValue() == null ? 0 : comboBoxTopicAddExam.GetValue()*/
+        });
+    })
+    $('#edit-exam').on('shown.bs.modal', function (e) {
+        gvExamLevelEdit.PerformCallback({
+            exam: idExam == null ? 0 : idExam,
+            course: comboBoxCourseEditExam.GetValue() == null ? 0 : comboBoxCourseEditExam.GetValue(),
+            /* topic: comboBoxTopicEditExam.GetValue() == null ? 0 : comboBoxTopicEditExam.GetValue()*/
+        });
+    })
+    window.addEventListener("beforeunload", function (e) {
+        if (finishAddExam == false && document.getElementById("IdExamAdd").value != null && document.getElementById("IdExamAdd").value.toString().length > 0) {
+            DeleteExamDataDefault();
+        }
+    });
+    var editorQuestionAddQuestionOne = CKEDITOR.replace('ContentAddExamEssayQuestionOne',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '110'
+        }
+    );
+    var editorAnswerOneAddQuestionTwo = CKEDITOR.replace('ContentAddExamEssayQuestionTwo',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '110'
+        }
+    );
+    var editorAnswerOneAddQuestionThree = CKEDITOR.replace('ContentAddExamEssayQuestionThree',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '110'
+        }
+    );
+    var editorAnswerOneAddQuestionFour = CKEDITOR.replace('ContentAddExamEssayQuestionFour',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '110'
+        }
+    );
+    var editorAnswerOneAddQuestionFive = CKEDITOR.replace('ContentAddExamEssayQuestionFive',
+        {
+            customConfig: '/Content/Custom/Scripts/Ckeditor/custom.js',
+            filebrowserImageBrowseUrl: '../Content/Custom/Scripts/Library/ckfinder/ckfinder.html?type=Images',
+            height: '110'
+        }
+    );
+    document.getElementById("content-questionone-addexam").style.display = "block";
+    document.getElementById("content-questiontwo-addexam").style.display = "none";
+    document.getElementById("content-questionthree-addexam").style.display = "none";
+    document.getElementById("content-questionfour-addexam").style.display = "none";
+    document.getElementById("content-questionfive-addexam").style.display = "none";
+
+
+
+</script>
+
+@Html.DevExpress().PopupControl(settings =>
+{
+    settings.Name = "PopupControlFilterExam";
+    settings.HeaderText = "Lọc Danh Sách";
+    settings.Styles.Header.Paddings.PaddingTop = 30;
+    settings.ShowOnPageLoad = false;
+    settings.ShowCloseButton = true;
+    settings.CloseAction = CloseAction.CloseButton;
+    settings.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+    settings.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+    settings.SettingsAdaptivity.HorizontalAlign = PopupAdaptiveHorizontalAlign.WindowRight;
+    settings.SettingsAdaptivity.MaxWidth = Unit.Pixel(300);
+    settings.SettingsAdaptivity.MinHeight = Unit.Pixel(600);
+    settings.SettingsAdaptivity.MaxHeight = Unit.Pixel(650);
+    settings.AllowDragging = false;
+    settings.ShowFooter = true;
+    settings.Styles.Content.Paddings.Padding = 0;
+    settings.Styles.Content.Paddings.PaddingTop = 12;
+    settings.SetFooterTemplateContent(c =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "footerFormLayoutFilterExam";
+            formLayoutsettings.Width = Unit.Percentage(100);
+            formLayoutsettings.ControlStyle.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutItem.CssClass = "clearPaddings";
+            formLayoutsettings.Styles.LayoutGroup.CssClass = "clearPaddings";
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxDecoration = GroupBoxDecoration.None;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                }).SetNestedContent(() =>
+                {
+                    ViewContext.Writer.Write("<div class='buttonsContainer'>");
+                    Html.DevExpress().Button(s =>
+                    {
+                        s.Name = "btnSubmitFilterExam";
+                        s.ControlStyle.CssClass = "submitButton";
+                        s.Width = Unit.Pixel(100);
+                        s.Text = "Xong";
+                        s.UseSubmitBehavior = false;
+                        s.ClientSideEvents.Click = "onSubmitClickFilterExam";
+                    }).Render();
+
+                    ViewContext.Writer.Write("</div>");
+                });
+            });
+        }).Render();
+    });
+    settings.SetContent(() =>
+    {
+        @Html.DevExpress().FormLayout(formLayoutsettings =>
+        {
+            formLayoutsettings.Name = "detailFormLayoutFilterExam";
+            formLayoutsettings.ColumnCount = 2;
+            formLayoutsettings.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+            formLayoutsettings.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 576;
+            formLayoutsettings.Items.AddGroupItem(g =>
+            {
+                g.GroupBoxStyle.Caption.CssClass = "groupCaption";
+                g.ShowCaption = DefaultBoolean.False;
+                g.ColumnSpan = 2;
+                g.ColumnCount = 2;
+                g.Paddings.Padding = Unit.Pixel(0);
+                g.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+                g.Items.Add(i =>
+                {
+                    i.ColumnSpan = 2;
+                    i.Caption = "Loại";
+                    i.SetNestedContent(() =>
+                    {
+                        Html.DevExpress().ComboBox(c =>
+                        {
+                            c.Name = "cbTypeExam";
+                            c.ControlStyle.CssClass = "field";
+                            c.SelectedIndex = 0;
+                            c.Properties.Items.Add("Kích hoạt", 0);
+                            c.Properties.Items.Add("Chưa kích hoạt", 1);
+                            c.Properties.ClientSideEvents.ValueChanged = "TypeExamValueChanged";
+                            c.Width = Unit.Percentage(100);
+                        }).GetHtml();
+
+                    });
+                });
+
+
+
+            });
+
+        }).Render();
+    });
+}).GetHtml()
